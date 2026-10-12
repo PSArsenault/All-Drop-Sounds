@@ -76,17 +76,6 @@ public interface AllDropSoundsConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "playSelfDrops",
-		name = "Items you drop",
-		description = "Play when you drop an item from your inventory onto the ground.",
-		position = 5
-	)
-	default boolean playSelfDrops()
-	{
-		return false;
-	}
-
-	@ConfigItem(
 		keyName = "ignoredItems",
 		name = "Ignored items",
 		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",

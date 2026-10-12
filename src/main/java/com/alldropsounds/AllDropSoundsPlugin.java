@@ -24,6 +24,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.ItemSpawned;
+import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.WidgetClosed;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.ItemComposition;
@@ -76,6 +77,7 @@ public class AllDropSoundsPlugin extends Plugin
 	private final DropSoundPlayer player = new DropSoundPlayer();
 	private final ChestLootWatch chestLootWatch = new ChestLootWatch();
 	private final Map<Integer, Integer> droppedAtTick = new HashMap<>();
+	private final Set<Integer> groundPlayedIds = new HashSet<>();
 	private final Set<Integer> playedRewardGroups = new HashSet<>();
 	private final Set<String> playedThisTick = new HashSet<>();
 
@@ -91,6 +93,7 @@ public class AllDropSoundsPlugin extends Plugin
 		soundLibrary.setFolder(folder);
 		refreshHighlightedLists();
 		droppedAtTick.clear();
+		groundPlayedIds.clear();
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		pendingRewardGroup = -1;
@@ -113,6 +116,7 @@ public class AllDropSoundsPlugin extends Plugin
 	{
 		player.shutdown();
 		droppedAtTick.clear();
+		groundPlayedIds.clear();
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		pendingRewardGroup = -1;
@@ -132,6 +136,7 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			blockGroundSoundsUntilTick = Integer.MAX_VALUE;
 			droppedAtTick.clear();
+			groundPlayedIds.clear();
 			playedThisTick.clear();
 			playedRewardGroups.clear();
 			pendingRewardGroup = -1;
@@ -155,6 +160,7 @@ public class AllDropSoundsPlugin extends Plugin
 	public void onGameTick(GameTick event)
 	{
 		playedThisTick.clear();
+		groundPlayedIds.clear();
 		chestLootWatch.onGameTick();
 
 		int tick = client.getTickCount();
@@ -188,13 +194,24 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			return;
 		}
-		boolean remembered = GroundDropRules.isRememberedDrop(droppedAtTick.get(canonical(tileItem.getId())), client.getTickCount());
-		if (!GroundDropRules.shouldPlay(config.playSelfDrops(), config.onlyYourDrops(), tileItem.getOwnership(), remembered))
+		boolean selfDrop = GroundDropRules.isRememberedDrop(droppedAtTick.get(canonical(tileItem.getId())), client.getTickCount());
+		if (!GroundDropRules.shouldPlay(config.onlyYourDrops(), tileItem.getOwnership(), selfDrop))
 		{
 			return;
 		}
 
+		groundPlayedIds.add(canonical(tileItem.getId()));
 		playItem(tileItem.getId(), tileItem.getQuantity());
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event)
+	{
+		if (!GroundDropRules.isManualDrop(event.getMenuOption(), event.isItemOp()) || event.getItemId() <= 0)
+		{
+			return;
+		}
+		droppedAtTick.put(canonical(event.getItemId()), client.getTickCount());
 	}
 
 	@Subscribe
@@ -233,7 +250,12 @@ public class AllDropSoundsPlugin extends Plugin
 		Map<Integer, Integer> gained = chestLootWatch.onInventoryChange(now);
 		for (Integer itemId : chestLootWatch.getLastLost())
 		{
-			droppedAtTick.put(canonical(itemId), client.getTickCount());
+			int id = canonical(itemId);
+			droppedAtTick.put(id, client.getTickCount());
+			if (groundPlayedIds.remove(id))
+			{
+				player.stop();
+			}
 		}
 		if (!config.playChestLoot())
 		{

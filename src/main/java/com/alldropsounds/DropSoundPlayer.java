@@ -45,6 +45,13 @@ public final class DropSoundPlayer
 		executor().execute(() -> playNow(wav, volume, playbackTicket));
 	}
 
+	public synchronized void stop()
+	{
+		generation++;
+		stopActive();
+		activePriority = SoundPriority.NONE;
+	}
+
 	public synchronized void shutdown()
 	{
 		generation++;

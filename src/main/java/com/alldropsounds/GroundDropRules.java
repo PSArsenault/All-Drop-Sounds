@@ -23,17 +23,22 @@ public final class GroundDropRules
 
 	public static final int SELF_DROP_WINDOW = 4;
 
-	public static boolean shouldPlay(boolean playItemsYouDrop, boolean onlyYourDrops, int ownership, boolean rememberedSelfDrop)
+	public static boolean shouldPlay(boolean onlyYourDrops, int ownership, boolean selfDrop)
 	{
-		if (rememberedSelfDrop)
+		if (selfDrop)
 		{
-			return playItemsYouDrop;
+			return false;
 		}
 		if (onlyYourDrops && !isYourDrop(ownership))
 		{
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean isManualDrop(String menuOption, boolean itemOp)
+	{
+		return itemOp && menuOption != null && menuOption.equalsIgnoreCase("Drop");
 	}
 
 	public static boolean isRememberedDrop(Integer droppedAtTick, int spawnTick)
@@ -45,11 +50,6 @@ public final class GroundDropRules
 
 		long delta = (long) spawnTick - droppedAtTick;
 		return delta >= -SELF_DROP_WINDOW && delta <= SELF_DROP_WINDOW;
-	}
-
-	public static boolean skipSelfDrop(boolean playItemsYouDrop, Integer droppedAtTick, int tickCount)
-	{
-		return !playItemsYouDrop && isRememberedDrop(droppedAtTick, tickCount);
 	}
 
 	public static boolean wasJustDropped(Integer droppedAtTick, int tickCount)
