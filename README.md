@@ -4,7 +4,7 @@ RuneLite plugin that plays a custom wav when an item drops on the ground or come
 
 ## Sounds
 
-Wav files go in `%USERPROFILE%\.runelite\plugin-data\all-drop-sounds`. The plugin creates that folder on startup and names the path in chat after you log in. Open sounds folder in the settings opens it. Tick the box once; it clears after the folder opens.
+Wav files go in `%USERPROFILE%\.runelite\plugin-data\all-drop-sounds`. The plugin creates that folder on startup and names the path in chat after you log in.
 
 **Master volume** is the first control in Sound volume and scales every sound. 0 is silent. Sounds also follow the in-game master and sound-effects sliders, and they stop when those sliders are muted.
 
@@ -55,7 +55,6 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 
 ## Settings
 
-- Open sounds folder
 - Ground drops
 - Chest loot
 - Only your drops

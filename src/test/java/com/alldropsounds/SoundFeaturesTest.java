@@ -4,9 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,16 +22,16 @@ public class SoundFeaturesTest
 		Path pets = Files.createFile(folder.resolve("pets.wav"));
 
 		SoundLibrary library = new SoundLibrary();
-		library.setFolder(folder);
-		Assert.assertEquals(first, library.find("Twisted bow"));
-		Assert.assertEquals(second, library.find("Twisted bow"));
-		Assert.assertEquals(first, library.find("Twisted bow"));
-		Assert.assertEquals(cluePattern, library.find("Clue scroll (easy)"));
-		Assert.assertEquals(clues, library.find("Clue scroll"));
-		Assert.assertEquals(cluePattern, library.find("Clue scroll (master)"));
-		Assert.assertEquals(skotos, library.find("Skotos"));
-		Assert.assertEquals(tiny, library.find("Tiny tempor"));
-		Assert.assertEquals(pets, library.findExact("pets"));
+		library.setFolder(TestFiles.of(folder));
+		Assert.assertEquals(TestFiles.of(first), library.find("Twisted bow"));
+		Assert.assertEquals(TestFiles.of(second), library.find("Twisted bow"));
+		Assert.assertEquals(TestFiles.of(first), library.find("Twisted bow"));
+		Assert.assertEquals(TestFiles.of(cluePattern), library.find("Clue scroll (easy)"));
+		Assert.assertEquals(TestFiles.of(clues), library.find("Clue scroll"));
+		Assert.assertEquals(TestFiles.of(cluePattern), library.find("Clue scroll (master)"));
+		Assert.assertEquals(TestFiles.of(skotos), library.find("Skotos"));
+		Assert.assertEquals(TestFiles.of(tiny), library.find("Tiny tempor"));
+		Assert.assertEquals(TestFiles.of(pets), library.findExact("pets"));
 		Assert.assertNull(library.find("Pet chaos elemental"));
 		Assert.assertTrue(SoundLibrary.wildcard("%dragon%", "Dragon claws"));
 		Assert.assertFalse(SoundLibrary.wildcard("%dragon%", "Rune platebody"));
@@ -94,18 +91,5 @@ public class SoundFeaturesTest
 		Assert.assertFalse(UniqueItems.isUnique("Burnt shrimp", false, 0, 0));
 		Assert.assertTrue(UniqueItems.isUnique("Some unique token", false, 0, 0));
 		Assert.assertFalse(UniqueItems.isUnique("Some unique token", true, 50, 1));
-	}
-
-	@Test
-	public void openSoundsFolderBoxClearsAfterTheFolderOpens()
-	{
-		JPanel row = new JPanel();
-		JCheckBox box = new JCheckBox();
-		box.setSelected(true);
-		row.add(new JLabel(AllDropSoundsConfig.OPEN_SOUNDS_FOLDER));
-		row.add(box);
-
-		Assert.assertTrue(SettingsCheckbox.clear(row, AllDropSoundsConfig.OPEN_SOUNDS_FOLDER));
-		Assert.assertFalse(box.isSelected());
 	}
 }
