@@ -18,6 +18,7 @@ public final class ChestLootWatch
 	private boolean awaiting;
 	private int ticksLeft;
 	private boolean startedThisTick;
+	private boolean capturedThisTick;
 	private List<Integer> lastLost = Collections.emptyList();
 
 	public void reset(Map<Integer, Integer> counts)
@@ -27,11 +28,13 @@ public final class ChestLootWatch
 		awaiting = false;
 		ticksLeft = 0;
 		startedThisTick = false;
+		capturedThisTick = false;
 		lastLost = Collections.emptyList();
 	}
 
 	public void onGameTick()
 	{
+		capturedThisTick = false;
 		if (startedThisTick)
 		{
 			startedThisTick = false;
@@ -53,6 +56,11 @@ public final class ChestLootWatch
 
 	public Map<Integer, Integer> onChestMessage()
 	{
+		if (capturedThisTick)
+		{
+			return Collections.emptyMap();
+		}
+
 		awaiting = true;
 		ticksLeft = WATCH_TICKS;
 		startedThisTick = true;
@@ -63,6 +71,7 @@ public final class ChestLootWatch
 		{
 			awaiting = false;
 			baseline = copy(inventory);
+			capturedThisTick = true;
 		}
 		return gained;
 	}
@@ -78,6 +87,7 @@ public final class ChestLootWatch
 			{
 				awaiting = false;
 				baseline = copy(now);
+				capturedThisTick = true;
 			}
 		}
 

@@ -33,7 +33,6 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.util.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +44,6 @@ import org.slf4j.LoggerFactory;
 public class AllDropSoundsPlugin extends Plugin
 {
 	private static final Logger log = LoggerFactory.getLogger(AllDropSoundsPlugin.class);
-	private static final int THEATRE_OF_BLOOD_REGION = 12867;
-	private static final int THEATRE_OF_BLOOD_LOBBY = 14642;
 	private static final int[] PVP_LOOT_CONTAINERS = {
 		InventoryID.DEADMAN_LOOT_INV0,
 		InventoryID.DEADMAN_LOOT_INV1,
@@ -124,6 +121,8 @@ public class AllDropSoundsPlugin extends Plugin
 		if (state == GameState.LOADING || state == GameState.HOPPING || state == GameState.LOGIN_SCREEN)
 		{
 			blockGroundSoundsUntilTick = Integer.MAX_VALUE;
+			droppedAtTick.clear();
+			playedThisTick.clear();
 			playedRewardGroups.clear();
 			pendingRewardGroup = -1;
 			return;
@@ -153,7 +152,7 @@ public class AllDropSoundsPlugin extends Plugin
 		chestLootWatch.onGameTick();
 
 		int tick = client.getTickCount();
-		droppedAtTick.entrySet().removeIf(entry -> tick - entry.getValue() > 2);
+		droppedAtTick.entrySet().removeIf(entry -> GroundDropRules.dropExpired(entry.getValue(), tick));
 
 		if (pendingRewardGroup != -1 && pendingRewardTicks > 0)
 		{
@@ -173,7 +172,7 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			return;
 		}
-		if (client.getTickCount() < blockGroundSoundsUntilTick)
+		if (GroundDropRules.spawnBlocked(client.getTickCount(), blockGroundSoundsUntilTick))
 		{
 			return;
 		}
@@ -316,10 +315,16 @@ public class AllDropSoundsPlugin extends Plugin
 			return false;
 		}
 
-		boolean found = false;
-		for (Item item : container.getItems())
+		Item[] items = container.getItems();
+		if (items == null)
 		{
-			if (item.getId() <= 0 || item.getQuantity() <= 0)
+			return false;
+		}
+
+		boolean found = false;
+		for (Item item : items)
+		{
+			if (item == null || item.getId() <= 0 || item.getQuantity() <= 0)
 			{
 				continue;
 			}
@@ -332,24 +337,33 @@ public class AllDropSoundsPlugin extends Plugin
 	private void playItem(int itemId, int quantity)
 	{
 		String name = itemName(itemId);
-		if (name == null || !playedThisTick.add(name.toLowerCase(Locale.ENGLISH)))
+		if (name == null)
+		{
+			return;
+		}
+
+		String key = name.toLowerCase(Locale.ENGLISH);
+		if (playedThisTick.contains(key))
 		{
 			return;
 		}
 
 		Path specific = soundLibrary.find(name);
-		if (specific != null)
+		ValueTier tier = specific == null ? tierFor(itemId, quantity) : null;
+		Path tierFile = tier == null ? null : soundLibrary.find(tier.getFileName());
+		DropSoundPlan plan = DropSoundPlan.choose(
+			specific,
+			tierFile,
+			config.itemVolume(),
+			tier == null ? 0 : volumeFor(tier)
+		);
+		if (plan == null)
 		{
-			player.play(specific, config.itemVolume());
 			return;
 		}
 
-		ValueTier tier = tierFor(itemId, quantity);
-		if (tier == null)
-		{
-			return;
-		}
-		player.play(soundLibrary.find(tier.getFileName()), volumeFor(tier));
+		playedThisTick.add(key);
+		player.play(plan.file, plan.volume);
 	}
 
 	private int volumeFor(ValueTier tier)
@@ -397,12 +411,7 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			return null;
 		}
-		name = Text.removeTags(name).trim();
-		if (name.isEmpty() || name.equalsIgnoreCase("null"))
-		{
-			return null;
-		}
-		return name;
+		return ItemNames.clean(name);
 	}
 
 	private int canonical(int itemId)
@@ -413,13 +422,12 @@ public class AllDropSoundsPlugin extends Plugin
 	private boolean wasJustDropped(int itemId)
 	{
 		Integer tick = droppedAtTick.get(canonical(itemId));
-		return tick != null && client.getTickCount() - tick <= 1;
+		return GroundDropRules.wasJustDropped(tick, client.getTickCount());
 	}
 
 	private static boolean isYourDrop(TileItem tileItem)
 	{
-		int ownership = tileItem.getOwnership();
-		return ownership == TileItem.OWNERSHIP_SELF || ownership == TileItem.OWNERSHIP_GROUP;
+		return GroundDropRules.isYourDrop(tileItem.getOwnership());
 	}
 
 	private boolean inTobChestRegion()
@@ -431,41 +439,17 @@ public class AllDropSoundsPlugin extends Plugin
 
 		WorldPoint worldPoint = WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation());
 		int region = worldPoint.getRegionID();
-		return region == THEATRE_OF_BLOOD_REGION || region == THEATRE_OF_BLOOD_LOBBY;
+		return RewardChests.inTheatreOfBlood(region);
 	}
 
 	private static boolean isRewardChest(int groupId)
 	{
-		return rewardContainer(groupId) != null || groupId == InterfaceID.WILDY_LOOT_CHEST;
+		return RewardChests.isRewardChest(groupId);
 	}
 
 	private static Integer rewardContainer(int groupId)
 	{
-		if (groupId == InterfaceID.BARROWS_REWARD)
-		{
-			return InventoryID.TRAIL_REWARDINV;
-		}
-		if (groupId == InterfaceID.RAIDS_REWARDS)
-		{
-			return InventoryID.RAIDS_REWARDS;
-		}
-		if (groupId == InterfaceID.TOB_CHESTS)
-		{
-			return InventoryID.TOB_CHESTS;
-		}
-		if (groupId == InterfaceID.TOA_CHESTS)
-		{
-			return InventoryID.TOA_CHESTS;
-		}
-		if (groupId == InterfaceID.PMOON_REWARD)
-		{
-			return InventoryID.PMOON_REWARDINV;
-		}
-		if (groupId == InterfaceID.COLOSSEUM_REWARD_CHEST_2)
-		{
-			return InventoryID.COLOSSEUM_REWARDS;
-		}
-		return null;
+		return RewardChests.rewardContainer(groupId);
 	}
 
 	private void resetInventoryWatch()
@@ -481,13 +465,19 @@ public class AllDropSoundsPlugin extends Plugin
 			return counts;
 		}
 
-		for (Item item : container.getItems())
+		Item[] items = container.getItems();
+		if (items == null)
 		{
-			if (item.getId() <= 0 || item.getQuantity() <= 0)
+			return counts;
+		}
+
+		for (Item item : items)
+		{
+			if (item == null || item.getId() <= 0 || item.getQuantity() <= 0)
 			{
 				continue;
 			}
-			counts.merge(item.getId(), item.getQuantity(), Integer::sum);
+			counts.merge(item.getId(), item.getQuantity(), InventoryDiff::addQuantity);
 		}
 		return counts;
 	}

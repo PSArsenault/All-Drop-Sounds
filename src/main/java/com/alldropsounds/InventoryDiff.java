@@ -31,8 +31,8 @@ public final class InventoryDiff
 				continue;
 			}
 
-			int previous = before == null ? 0 : before.getOrDefault(id, 0);
-			if (entry.getValue() > previous)
+			int previous = quantity(before, id);
+			if (quantity(entry.getValue()) > previous)
 			{
 				gained.add(id);
 			}
@@ -56,11 +56,15 @@ public final class InventoryDiff
 				continue;
 			}
 
-			int previous = before == null ? 0 : before.getOrDefault(id, 0);
-			int added = entry.getValue() - previous;
-			if (added > 0)
+			int previous = quantity(before, id);
+			long added = (long) quantity(entry.getValue()) - previous;
+			if (added > Integer.MAX_VALUE)
 			{
-				gained.put(id, added);
+				gained.put(id, Integer.MAX_VALUE);
+			}
+			else if (added > 0)
+			{
+				gained.put(id, (int) added);
 			}
 		}
 		return gained;
@@ -82,12 +86,41 @@ public final class InventoryDiff
 				continue;
 			}
 
-			int next = after == null ? 0 : after.getOrDefault(id, 0);
-			if (entry.getValue() > next)
+			long next = quantity(after, id);
+			if (quantity(entry.getValue()) > next)
 			{
 				lost.add(id);
 			}
 		}
 		return lost;
+	}
+
+	private static int quantity(Map<Integer, Integer> counts, int id)
+	{
+		if (counts == null)
+		{
+			return 0;
+		}
+		return quantity(counts.get(id));
+	}
+
+	/**
+	 * Adds two stack counts without throwing when the sum does not fit in an int.
+	 */
+	public static int addQuantity(int left, int right)
+	{
+		try
+		{
+			return Math.addExact(left, right);
+		}
+		catch (ArithmeticException ex)
+		{
+			return Integer.MAX_VALUE;
+		}
+	}
+
+	private static int quantity(Integer value)
+	{
+		return value == null ? 0 : value;
 	}
 }

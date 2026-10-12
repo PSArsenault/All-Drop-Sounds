@@ -40,6 +40,13 @@ public enum PriceSource
 		{
 			return 0L;
 		}
-		return (long) unitPrice * quantity;
+		try
+		{
+			return Math.multiplyExact(unitPrice, (long) quantity);
+		}
+		catch (ArithmeticException ex)
+		{
+			return Long.MAX_VALUE;
+		}
 	}
 }
