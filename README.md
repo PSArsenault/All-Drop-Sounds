@@ -4,11 +4,11 @@ RuneLite plugin that plays a custom wav when an item drops on the ground or come
 
 ## Sounds
 
-Wav files go in the sounds folder. The default is `%USERPROFILE%\.runelite\all-drop-sounds`. The plugin creates that folder on startup and names the path in chat after you log in. Another folder can be set in the plugin settings.
+Wav files go in `%USERPROFILE%\.runelite\plugin-data\all-drop-sounds`. The plugin creates that folder on startup and names the path in chat after you log in.
 
 **Master volume** is at the top of the settings and scales every sound. 0 is silent. Sounds also follow the in-game master and sound-effects sliders, and they stop when those sliders are muted.
 
-An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `Clue scroll.wav` also matches `Clue scroll (easy)` and the other clue scrolls. A file name can include `*` as a wildcard.
+An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `Clue scroll.wav` also matches `Clue scroll (easy)` and the other clue scrolls. A `%` in a file name is a wildcard.
 
 ```
 Twisted bow.wav
@@ -24,7 +24,7 @@ When an item has no file of its own, the plugin picks the first match:
 2. `Unique.wav`, for pets and other untradeable uniques that have no price
 3. The highest price tier the stack still meets
 
-A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default). If `highlighted.wav` or `Unique.wav` is missing, the price tier sound is used. A volume of 0 stays silent.
+A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default). If `highlighted.wav` or `Unique.wav` is missing, the price tier sound is used. A volume of 0 stays silent. A rarer drop stops a cheaper sound that is already playing.
 
 ```
 highlighted.wav
@@ -38,8 +38,6 @@ Insane++.wav
 ```
 
 Default start prices are 20,000, 100,000, 1,000,000, 10,000,000, 50,000,000, and 250,000,000. Each tier has its own volume. A start price of 0 disables that tier. A stack below every enabled tier plays no tier sound.
-
-**Sound gap** is how long to wait before another sound of the same or lower rarity. A rarer drop plays immediately and stops the current sound.
 
 One sound plays per item name when:
 
@@ -55,7 +53,6 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 ## Settings
 
 - Master volume
-- Sounds folder
 - Item volume
 - Ground drops
 - Chest loot
@@ -65,7 +62,6 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 - Highlighted volume
 - Untradeable uniques
 - Unique volume
-- Sound gap
 - Price source
 - Low, Medium, High, Insane, Insane+, and Insane++ start price and volume
 

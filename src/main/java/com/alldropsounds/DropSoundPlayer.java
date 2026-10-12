@@ -19,33 +19,30 @@ public final class DropSoundPlayer
 	private volatile Clip active;
 	private int generation;
 	private int activePriority = SoundPriority.NONE;
-	private long activeAtMs;
 
 	public void play(Path wav, int volumePercent)
 	{
-		play(wav, volumePercent, 0, 0);
+		play(wav, volumePercent, 0);
 	}
 
-	public synchronized boolean play(Path wav, int volumePercent, int priority, int cooldownMs)
+	public synchronized void play(Path wav, int volumePercent, int priority)
 	{
 		if (wav == null || volumePercent <= 0)
 		{
-			return false;
+			return;
 		}
 
-		long now = System.currentTimeMillis();
-		if (!SoundGate.allow(priority, activePriority, now - activeAtMs, cooldownMs))
+		int ticket = generation;
+		if (priority > activePriority)
 		{
-			return false;
+			ticket = ++generation;
+			stopActive();
+			activePriority = priority;
 		}
 
-		int ticket = ++generation;
-		stopActive();
-		activePriority = priority;
-		activeAtMs = now;
 		int volume = Math.min(100, volumePercent);
-		executor().execute(() -> playNow(wav, volume, ticket));
-		return true;
+		int playbackTicket = ticket;
+		executor().execute(() -> playNow(wav, volume, playbackTicket));
 	}
 
 	public synchronized void shutdown()

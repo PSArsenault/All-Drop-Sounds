@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  * The file name, without .wav, is the item name.
  * "Twisted bow 2.wav" takes a turn with "Twisted bow.wav".
  * "Clue scroll.wav" also matches "Clue scroll (easy)".
+ * A "%" in the file name is a wildcard.
  */
 public final class SoundLibrary
 {
@@ -108,7 +109,7 @@ public final class SoundLibrary
 		String best = null;
 		for (String base : groups.keySet())
 		{
-			if (base.indexOf('*') >= 0)
+			if (base.indexOf('%') >= 0)
 			{
 				continue;
 			}
@@ -196,7 +197,7 @@ public final class SoundLibrary
 				{
 					files = new ArrayList<Path>();
 					groups.put(base, files);
-					if (base.indexOf('*') >= 0)
+					if (base.indexOf('%') >= 0)
 					{
 						wildcards.add(base);
 					}
@@ -289,7 +290,7 @@ public final class SoundLibrary
 		for (int i = 0; i < pattern.length(); i++)
 		{
 			char c = pattern.charAt(i);
-			if (c == '*')
+			if (c == '%')
 			{
 				regex.append(".*");
 			}

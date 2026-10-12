@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
-import net.runelite.api.TileItem;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,18 +24,14 @@ public class SoundFeaturesTest
 		Assert.assertEquals(first, library.find("Twisted bow"));
 		Assert.assertEquals(clues, library.find("Clue scroll (easy)"));
 		Assert.assertEquals(clues, library.find("Clue scroll (master)"));
-		Assert.assertTrue(SoundLibrary.wildcard("*dragon*", "Dragon claws"));
-		Assert.assertFalse(SoundLibrary.wildcard("*dragon*", "Rune platebody"));
+		Assert.assertTrue(SoundLibrary.wildcard("%dragon%", "Dragon claws"));
+		Assert.assertFalse(SoundLibrary.wildcard("%dragon%", "Rune platebody"));
 		Assert.assertNull(library.find("Rune platebody"));
 	}
 
 	@Test
-	public void rarerSoundsPassTheGateAndCheaperOnesWait()
+	public void rarerSoundsOutrankCheaperOnes()
 	{
-		Assert.assertTrue(SoundGate.allow(SoundPriority.rank(ValueTier.INSANE, false, false, false), SoundPriority.rank(ValueTier.LOW, true, false, false), 10, 400));
-		Assert.assertFalse(SoundGate.allow(1, 1, 10, 400));
-		Assert.assertTrue(SoundGate.allow(1, 1, 400, 400));
-		Assert.assertTrue(SoundGate.allow(1, 1, 0, 0));
 		Assert.assertTrue(SoundPriority.rank(null, false, false, true) > SoundPriority.rank(ValueTier.INSANE_PLUS_PLUS, false, true, false));
 		Assert.assertTrue(SoundPriority.rank(ValueTier.LOW, true, false, false) < SoundPriority.rank(null, false, true, false));
 	}
@@ -82,15 +77,5 @@ public class SoundFeaturesTest
 		Assert.assertFalse(UniqueItems.isUnique("Burnt shrimp", false, 0, 0));
 		Assert.assertTrue(UniqueItems.isUnique("Some unique token", false, 0, 0));
 		Assert.assertFalse(UniqueItems.isUnique("Some unique token", true, 50, 1));
-	}
-
-	@Test
-	public void selfDropsWaitForTheInventoryEvent()
-	{
-		GroundSpawnQueue queue = new GroundSpawnQueue();
-		queue.add(995, 1, TileItem.OWNERSHIP_NONE, 10);
-		Assert.assertTrue(queue.drainReady(11).isEmpty());
-		Assert.assertEquals(1, queue.drainReady(12).size());
-		Assert.assertTrue(queue.drainReady(13).isEmpty());
 	}
 }

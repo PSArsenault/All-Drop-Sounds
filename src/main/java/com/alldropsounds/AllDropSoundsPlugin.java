@@ -75,7 +75,6 @@ public class AllDropSoundsPlugin extends Plugin
 	private final SoundLibrary soundLibrary = new SoundLibrary();
 	private final DropSoundPlayer player = new DropSoundPlayer();
 	private final ChestLootWatch chestLootWatch = new ChestLootWatch();
-	private final GroundSpawnQueue groundSpawns = new GroundSpawnQueue();
 	private final Map<Integer, Integer> droppedAtTick = new HashMap<>();
 	private final Set<Integer> playedRewardGroups = new HashSet<>();
 	private final Set<String> playedThisTick = new HashSet<>();
@@ -150,11 +149,6 @@ public class AllDropSoundsPlugin extends Plugin
 	public void onConfigChanged(ConfigChanged event)
 	{
 		refreshHighlightedLists();
-		if (!AllDropSoundsConfig.GROUP.equals(event.getGroup()))
-		{
-			return;
-		}
-		soundLibrary.setFolder(resolveFolder());
 	}
 
 	@Subscribe
@@ -164,15 +158,6 @@ public class AllDropSoundsPlugin extends Plugin
 		chestLootWatch.onGameTick();
 
 		int tick = client.getTickCount();
-		for (GroundSpawnQueue.Spawn spawn : groundSpawns.drainReady(tick))
-		{
-			boolean remembered = GroundDropRules.isRememberedDrop(droppedAtTick.get(canonical(spawn.itemId)), spawn.tick);
-			if (!GroundDropRules.shouldPlay(config.playSelfDrops(), config.onlyYourDrops(), spawn.ownership, remembered))
-			{
-				continue;
-			}
-			playItem(spawn.itemId, spawn.quantity);
-		}
 		droppedAtTick.entrySet().removeIf(entry -> GroundDropRules.dropExpired(entry.getValue(), tick));
 
 		if (pendingRewardGroup != -1 && pendingRewardTicks > 0)
@@ -203,12 +188,13 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			return;
 		}
-		if (config.onlyYourDrops() && !isYourDrop(tileItem) && !config.playSelfDrops())
+		boolean remembered = GroundDropRules.isRememberedDrop(droppedAtTick.get(canonical(tileItem.getId())), client.getTickCount());
+		if (!GroundDropRules.shouldPlay(config.playSelfDrops(), config.onlyYourDrops(), tileItem.getOwnership(), remembered))
 		{
 			return;
 		}
 
-		groundSpawns.add(tileItem.getId(), tileItem.getQuantity(), tileItem.getOwnership(), client.getTickCount());
+		playItem(tileItem.getId(), tileItem.getQuantity());
 	}
 
 	@Subscribe
@@ -401,10 +387,7 @@ public class AllDropSoundsPlugin extends Plugin
 		}
 
 		int priority = SoundPriority.rank(valueTier, specific != null, highlightedFile != null, uniqueFile != null);
-		if (!player.play(plan.file, volume, priority, config.soundGap()))
-		{
-			return;
-		}
+		player.play(plan.file, volume, priority);
 		playedThisTick.add(key);
 	}
 
@@ -512,11 +495,6 @@ public class AllDropSoundsPlugin extends Plugin
 		return itemManager.canonicalize(itemId);
 	}
 
-	private static boolean isYourDrop(TileItem tileItem)
-	{
-		return GroundDropRules.isYourDrop(tileItem.getOwnership());
-	}
-
 	private boolean inTobChestRegion()
 	{
 		if (client.getLocalPlayer() == null)
@@ -571,16 +549,7 @@ public class AllDropSoundsPlugin extends Plugin
 
 	private Path resolveFolder()
 	{
-		String configured = config.soundsFolder();
-		Path folder;
-		if (configured == null || configured.trim().isEmpty())
-		{
-			folder = new File(RuneLite.RUNELITE_DIR, "all-drop-sounds").toPath();
-		}
-		else
-		{
-			folder = new File(configured.trim()).toPath();
-		}
+		Path folder = new File(RuneLite.RUNELITE_DIR, "plugin-data/all-drop-sounds").toPath();
 
 		File directory = folder.toFile();
 		if (!directory.isDirectory() && !directory.mkdirs())
