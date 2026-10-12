@@ -16,9 +16,21 @@ Start each change from the latest `master`:
 
 Keep one change on a branch. Delete the branch after the pull request merges.
 
+## Change workflow
+
+1. Start from the latest `master`.
+2. Run `gradle test`.
+3. Commit on the topic branch.
+4. Push the branch.
+5. Open a pull request into `master`.
+6. Run `gradle test` again.
+7. Merge when those tests pass, delete the branch, and fast-forward `main` to `master`.
+
+Do not commit directly on `master` or `main`.
+
 ## Pull requests
 
-Describe what changed and why. List how you tested it. Run `gradle test`. When the change is audible or visible in game, say what you clicked and what you heard.
+Describe what changed and why. List how you tested it. When the change is audible or visible in game, say what you clicked and what you heard.
 
 Do not commit `.gradle/` or `build/`.
 
