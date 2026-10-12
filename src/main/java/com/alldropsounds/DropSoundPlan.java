@@ -1,6 +1,6 @@
 package com.alldropsounds;
 
-import java.nio.file.Path;
+import net.runelite.client.util.Filepath;
 
 /**
  * Picks the wav and volume for one item.
@@ -23,21 +23,21 @@ public final class DropSoundPlan
 		return Math.min(100, Math.max(0, scaled));
 	}
 
-	public final Path file;
+	public final Filepath file;
 	public final int volume;
 
-	private DropSoundPlan(Path file, int volume)
+	private DropSoundPlan(Filepath file, int volume)
 	{
 		this.file = file;
 		this.volume = volume;
 	}
 
-	public static DropSoundPlan choose(Path specificFile, Path tierFile, int itemVolume, int tierVolume)
+	public static DropSoundPlan choose(Filepath specificFile, Filepath tierFile, int itemVolume, int tierVolume)
 	{
 		return choose(specificFile, null, tierFile, itemVolume, 0, tierVolume);
 	}
 
-	public static DropSoundPlan choose(Path specificFile, Path highlightedFile, Path tierFile, int itemVolume, int highlightedVolume, int tierVolume)
+	public static DropSoundPlan choose(Filepath specificFile, Filepath highlightedFile, Filepath tierFile, int itemVolume, int highlightedVolume, int tierVolume)
 	{
 		if (specificFile != null)
 		{
@@ -50,7 +50,7 @@ public final class DropSoundPlan
 		return playable(tierFile, tierVolume);
 	}
 
-	private static DropSoundPlan playable(Path file, int volume)
+	private static DropSoundPlan playable(Filepath file, int volume)
 	{
 		if (file == null || volume <= 0)
 		{

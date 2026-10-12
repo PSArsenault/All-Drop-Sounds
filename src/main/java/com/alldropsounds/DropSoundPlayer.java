@@ -1,9 +1,9 @@
 package com.alldropsounds;
 
-import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.util.Filepath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public final class DropSoundPlayer
 	private final AudioPlayer audioPlayer = new AudioPlayer();
 	private ExecutorService executor;
 
-	public synchronized void play(Path wav, int volumePercent)
+	public synchronized void play(Filepath wav, int volumePercent)
 	{
 		if (wav == null || volumePercent <= 0)
 		{
@@ -62,11 +62,11 @@ public final class DropSoundPlayer
 		return (float) (20.0 * Math.log10(volumePercent / 100.0));
 	}
 
-	private void playNow(Path wav, float gain)
+	private void playNow(Filepath wav, float gain)
 	{
 		try
 		{
-			audioPlayer.play(wav.toFile(), gain);
+			audioPlayer.play(wav, gain);
 		}
 		catch (Exception ex)
 		{

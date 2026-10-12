@@ -1,8 +1,6 @@
 package com.alldropsounds;
 
 import com.google.inject.Provides;
-import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
-import javax.swing.SwingUtilities;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -32,7 +29,6 @@ import net.runelite.api.ItemComposition;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.VarPlayerID;
-import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -40,12 +36,13 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.util.LinkBrowser;
+import net.runelite.client.util.Filepath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
 	name = "All Drop Sounds",
+	internalName = "all-drop-sounds",
 	description = "Plays a wav named after an item when it drops or comes from a chest",
 	tags = {"sound", "drops", "loot", "chest"}
 )
@@ -88,9 +85,10 @@ public class AllDropSoundsPlugin extends Plugin
 	private List<String> highlightedLists = Collections.emptyList();
 
 	@Override
-	protected void startUp()
+	protected void startUp() throws Exception
 	{
-		Path folder = resolveFolder();
+		Filepath folder = getPluginDirectory();
+		folder.createDirectories();
 		soundLibrary.setFolder(folder);
 		refreshHighlightedLists();
 		droppedAtTick.clear();
@@ -151,12 +149,6 @@ public class AllDropSoundsPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
-		if (AllDropSoundsConfig.GROUP.equals(event.getGroup()) && "openSoundsFolder".equals(event.getKey()) && "true".equals(event.getNewValue()))
-		{
-			LinkBrowser.open(resolveFolder().toAbsolutePath().toString());
-			configManager.unsetConfiguration(AllDropSoundsConfig.GROUP, "openSoundsFolder");
-			SwingUtilities.invokeLater(() -> SettingsCheckbox.clear(AllDropSoundsConfig.OPEN_SOUNDS_FOLDER));
-		}
 		refreshHighlightedLists();
 	}
 
@@ -375,12 +367,12 @@ public class AllDropSoundsPlugin extends Plugin
 			return;
 		}
 
-		Path specific = soundLibrary.find(name);
+		Filepath specific = soundLibrary.find(name);
 		ValueTier valueTier = tierFor(itemId, quantity);
 		boolean highlighted = specific == null && HighlightedLists.matches(highlightedLists, name, quantity);
-		Path highlightedFile = highlighted ? soundLibrary.findExact(DropSoundPlan.HIGHLIGHTED_FILE) : null;
+		Filepath highlightedFile = highlighted ? soundLibrary.findExact(DropSoundPlan.HIGHLIGHTED_FILE) : null;
 		boolean unique = specific == null && highlightedFile == null && config.playUniques() && isUnique(itemId, name);
-		Path uniqueFile = null;
+		Filepath uniqueFile = null;
 		if (unique)
 		{
 			uniqueFile = soundLibrary.findExact(UniqueItems.categoryStem(name));
@@ -390,7 +382,7 @@ public class AllDropSoundsPlugin extends Plugin
 			}
 		}
 		ValueTier tier = specific == null && highlightedFile == null && uniqueFile == null ? valueTier : null;
-		Path tierFile = tier == null ? null : soundLibrary.find(tier.getFileName());
+		Filepath tierFile = tier == null ? null : soundLibrary.find(tier.getFileName());
 		DropSoundPlan plan = DropSoundPlan.choose(
 			specific,
 			highlightedFile != null ? highlightedFile : uniqueFile,
@@ -573,19 +565,7 @@ public class AllDropSoundsPlugin extends Plugin
 		return counts;
 	}
 
-	private Path resolveFolder()
-	{
-		Path folder = new File(RuneLite.RUNELITE_DIR, "plugin-data/all-drop-sounds").toPath();
-
-		File directory = folder.toFile();
-		if (!directory.isDirectory() && !directory.mkdirs())
-		{
-			log.warn("Could not create sounds folder {}", directory);
-		}
-		return folder;
-	}
-
-	private void announceFolder(Path folder)
+	private void announceFolder(Filepath folder)
 	{
 		client.addChatMessage(
 			ChatMessageType.GAMEMESSAGE,

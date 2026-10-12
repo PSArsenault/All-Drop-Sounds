@@ -1,0 +1,13 @@
+---
+description: Plugin Hub API limits for files, folders, and playback
+alwaysApply: true
+---
+
+# Plugin Hub APIs
+
+Review comments from the Plugin Hub are permanent limits.
+
+- Do not call `LinkBrowser.open` or `Desktop.open`. There is no setting that opens the sounds folder.
+- Do all file I/O through `net.runelite.client.util.Filepath`. Do not use `java.io.File`, `java.nio.file.Files`, or `java.nio.file.Path` in plugin code.
+- The sounds folder is `getPluginDirectory()`. `@PluginDescriptor` must set `internalName = "all-drop-sounds"` so that directory stays `.runelite/plugin-data/all-drop-sounds`.
+- Play wavs with `AudioPlayer.play(Filepath, float)`. Do not import `javax.sound`.

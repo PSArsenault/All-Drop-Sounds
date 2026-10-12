@@ -164,25 +164,25 @@ public class EdgeCasesTest
 		Assert.assertNull(library.find("Insane+"));
 		Assert.assertNull(library.find(null));
 
-		library.setFolder(sounds.resolve("missing"));
+		library.setFolder(TestFiles.of(sounds.resolve("missing")));
 		Assert.assertNull(library.find("Insane+"));
 
-		library.setFolder(sounds.resolve("notes.txt"));
+		library.setFolder(TestFiles.of(sounds.resolve("notes.txt")));
 		Assert.assertEquals(0, library.size());
 
-		library.setFolder(sounds);
-		Assert.assertEquals(sounds.resolve("Insane+.wav"), library.find("insane+"));
-		Assert.assertEquals(sounds.resolve("Insane++.wav"), library.find("INSANE++"));
-		Assert.assertEquals(sounds.resolve("Dharok's helm.wav"), library.find("Dharok's helm"));
+		library.setFolder(TestFiles.of(sounds));
+		Assert.assertEquals(TestFiles.of(sounds.resolve("Insane+.wav")), library.find("insane+"));
+		Assert.assertEquals(TestFiles.of(sounds.resolve("Insane++.wav")), library.find("INSANE++"));
+		Assert.assertEquals(TestFiles.of(sounds.resolve("Dharok's helm.wav")), library.find("Dharok's helm"));
 		Assert.assertNull(library.find(""));
 		Assert.assertNull(library.find("null"));
 		Assert.assertNull(library.findDropSound("Bones", ValueTier.HIGH));
-		Assert.assertEquals(sounds.resolve("Insane+.wav"), library.findDropSound("Low", ValueTier.INSANE_PLUS));
+		Assert.assertEquals(TestFiles.of(sounds.resolve("Insane+.wav")), library.findDropSound("Low", ValueTier.INSANE_PLUS));
 
 		Path added = sounds.resolve("Twisted bow.wav");
 		Files.createFile(added);
 		Assert.assertTrue(sounds.toFile().setLastModified(System.currentTimeMillis() + 10_000L));
-		Assert.assertEquals(added, library.find("Twisted bow"));
+		Assert.assertEquals(TestFiles.of(added), library.find("Twisted bow"));
 
 		Files.delete(added);
 		Assert.assertTrue(sounds.toFile().setLastModified(System.currentTimeMillis() + 20_000L));
@@ -191,9 +191,9 @@ public class EdgeCasesTest
 		Path other = root.resolve("other");
 		Files.createDirectories(other);
 		Files.createFile(other.resolve("Coins.wav"));
-		library.setFolder(other);
+		library.setFolder(TestFiles.of(other));
 		Assert.assertNull(library.find("Insane+"));
-		Assert.assertEquals(other.resolve("Coins.wav"), library.find("Coins"));
+		Assert.assertEquals(TestFiles.of(other.resolve("Coins.wav")), library.find("Coins"));
 	}
 
 	@Test
@@ -203,31 +203,31 @@ public class EdgeCasesTest
 		Path item = Files.createFile(folder.resolve("Twisted bow.wav"));
 		Path low = Files.createFile(folder.resolve("Low.wav"));
 
-		DropSoundPlan specific = DropSoundPlan.choose(item, low, 40, 90);
-		Assert.assertEquals(item, specific.file);
+		DropSoundPlan specific = DropSoundPlan.choose(TestFiles.of(item), TestFiles.of(low), 40, 90);
+		Assert.assertEquals(TestFiles.of(item), specific.file);
 		Assert.assertEquals(40, specific.volume);
 
-		DropSoundPlan tier = DropSoundPlan.choose(null, low, 40, 90);
-		Assert.assertEquals(low, tier.file);
+		DropSoundPlan tier = DropSoundPlan.choose(null, TestFiles.of(low), 40, 90);
+		Assert.assertEquals(TestFiles.of(low), tier.file);
 		Assert.assertEquals(90, tier.volume);
 
-		Assert.assertNull(DropSoundPlan.choose(item, low, 0, 90));
-		Assert.assertNull(DropSoundPlan.choose(null, low, 100, -1));
+		Assert.assertNull(DropSoundPlan.choose(TestFiles.of(item), TestFiles.of(low), 0, 90));
+		Assert.assertNull(DropSoundPlan.choose(null, TestFiles.of(low), 100, -1));
 		Assert.assertNull(DropSoundPlan.choose(null, null, 100, 100));
-		Assert.assertEquals(100, DropSoundPlan.choose(null, low, 1, 250).volume);
+		Assert.assertEquals(100, DropSoundPlan.choose(null, TestFiles.of(low), 1, 250).volume);
 
 		Path highlighted = Files.createFile(folder.resolve("highlighted.wav"));
-		DropSoundPlan highlightedPlan = DropSoundPlan.choose(null, highlighted, low, 40, 70, 90);
-		Assert.assertEquals(highlighted, highlightedPlan.file);
+		DropSoundPlan highlightedPlan = DropSoundPlan.choose(null, TestFiles.of(highlighted), TestFiles.of(low), 40, 70, 90);
+		Assert.assertEquals(TestFiles.of(highlighted), highlightedPlan.file);
 		Assert.assertEquals(70, highlightedPlan.volume);
 
-		DropSoundPlan itemWins = DropSoundPlan.choose(item, highlighted, low, 40, 70, 90);
-		Assert.assertEquals(item, itemWins.file);
+		DropSoundPlan itemWins = DropSoundPlan.choose(TestFiles.of(item), TestFiles.of(highlighted), TestFiles.of(low), 40, 70, 90);
+		Assert.assertEquals(TestFiles.of(item), itemWins.file);
 		Assert.assertEquals(40, itemWins.volume);
 
-		Assert.assertNull(DropSoundPlan.choose(null, highlighted, low, 40, 0, 90));
-		Assert.assertEquals(low, DropSoundPlan.choose(null, null, low, 40, 70, 90).file);
-		Assert.assertEquals(100, DropSoundPlan.choose(null, highlighted, null, 1, 250, 90).volume);
+		Assert.assertNull(DropSoundPlan.choose(null, TestFiles.of(highlighted), TestFiles.of(low), 40, 0, 90));
+		Assert.assertEquals(TestFiles.of(low), DropSoundPlan.choose(null, null, TestFiles.of(low), 40, 70, 90).file);
+		Assert.assertEquals(100, DropSoundPlan.choose(null, TestFiles.of(highlighted), null, 1, 250, 90).volume);
 		Assert.assertEquals(50, DropSoundPlan.applyMaster(100, 50));
 		Assert.assertEquals(0, DropSoundPlan.applyMaster(80, 0));
 		Assert.assertEquals(25, DropSoundPlan.applyMaster(50, 50));
@@ -308,13 +308,13 @@ public class EdgeCasesTest
 
 		DropSoundPlayer player = new DropSoundPlayer();
 		player.play(null, 100);
-		player.play(garbage, 0);
-		player.play(garbage, -10);
-		player.play(folder.resolve("missing.wav"), 100);
-		player.play(garbage, 50);
+		player.play(TestFiles.of(garbage), 0);
+		player.play(TestFiles.of(garbage), -10);
+		player.play(TestFiles.of(folder.resolve("missing.wav")), 100);
+		player.play(TestFiles.of(garbage), 50);
 		player.shutdown();
 		player.shutdown();
-		player.play(garbage, 100);
+		player.play(TestFiles.of(garbage), 100);
 
 		Assert.assertEquals(0f, DropSoundPlayer.decibels(100), 0.001f);
 		Assert.assertEquals(0f, DropSoundPlayer.decibels(101), 0.001f);
@@ -400,10 +400,10 @@ public class EdgeCasesTest
 		Files.createFile(folder.resolve("notes.WAV.txt"));
 
 		SoundLibrary library = new SoundLibrary();
-		library.setFolder(folder);
+		library.setFolder(TestFiles.of(folder));
 		Assert.assertEquals(2, library.size());
 		Assert.assertNotNull(library.find("coins"));
-		Assert.assertEquals(folder.resolve("Twisted bow .wav"), library.find("  Twisted bow  "));
+		Assert.assertEquals(TestFiles.of(folder.resolve("Twisted bow .wav")), library.find("  Twisted bow  "));
 		Assert.assertNull(library.find("Low.wav"));
 		Assert.assertNull(library.find("notes.WAV"));
 		Assert.assertNull(library.findDropSound(null, null));
