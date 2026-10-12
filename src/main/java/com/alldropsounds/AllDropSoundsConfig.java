@@ -15,14 +15,14 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigSection(
 		name = "Sound volume",
 		description = "Volume for each kind of drop sound. 0 is silent. Master volume scales every sound.",
-		position = 6
+		position = 7
 	)
 	String soundVolume = "soundVolume";
 
 	@ConfigSection(
 		name = "Value sounds",
 		description = "Start prices for tier wavs used when an item has no file of its own, is not highlighted, and is not an untradeable unique.",
-		position = 7
+		position = 8
 	)
 	String valueSounds = "valueSounds";
 
@@ -71,10 +71,21 @@ public interface AllDropSoundsConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "playSelfDrops",
+		name = "Items you drop",
+		description = "Play a sound when you drop an item from your inventory onto the ground.",
+		position = 4
+	)
+	default boolean playSelfDrops()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "ignoredItems",
 		name = "Ignored items",
 		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
-		position = 4
+		position = 5
 	)
 	default String ignoredItems()
 	{
@@ -85,7 +96,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playUniques",
 		name = "Untradeable uniques",
 		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
-		position = 5
+		position = 6
 	)
 	default boolean playUniques()
 	{

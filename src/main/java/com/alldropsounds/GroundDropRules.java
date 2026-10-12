@@ -23,11 +23,11 @@ public final class GroundDropRules
 
 	public static final int SELF_DROP_WINDOW = 4;
 
-	public static boolean shouldPlay(boolean onlyYourDrops, int ownership, boolean selfDrop)
+	public static boolean shouldPlay(boolean playItemsYouDrop, boolean onlyYourDrops, int ownership, boolean selfDrop)
 	{
 		if (selfDrop)
 		{
-			return false;
+			return playItemsYouDrop;
 		}
 		if (onlyYourDrops && !isYourDrop(ownership))
 		{
