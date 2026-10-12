@@ -39,6 +39,7 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.LinkBrowser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,6 +154,11 @@ public class AllDropSoundsPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
+		if (AllDropSoundsConfig.GROUP.equals(event.getGroup()) && "openSoundsFolder".equals(event.getKey()) && "true".equals(event.getNewValue()))
+		{
+			LinkBrowser.open(resolveFolder().toAbsolutePath().toString());
+			configManager.unsetConfiguration(AllDropSoundsConfig.GROUP, "openSoundsFolder");
+		}
 		refreshHighlightedLists();
 	}
 

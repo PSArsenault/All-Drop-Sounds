@@ -33,13 +33,24 @@ public interface AllDropSoundsConfig extends Config
 	@Range(min = 0, max = 100)
 	@ConfigItem(
 		keyName = "volume",
-		name = "Item volume",
+		name = "Specific drop volume",
 		description = "Volume for wav files named after a specific item. 0 is silent.",
 		position = 1
 	)
 	default int itemVolume()
 	{
 		return 100;
+	}
+
+	@ConfigItem(
+		keyName = "openSoundsFolder",
+		name = "Open sounds folder",
+		description = "Open the folder where wav files are stored. The box clears after the folder opens.",
+		position = 5
+	)
+	default boolean openSoundsFolder()
+	{
+		return false;
 	}
 
 	@ConfigItem(
