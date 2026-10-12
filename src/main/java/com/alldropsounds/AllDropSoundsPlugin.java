@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -158,6 +159,7 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			LinkBrowser.open(resolveFolder().toAbsolutePath().toString());
 			configManager.unsetConfiguration(AllDropSoundsConfig.GROUP, "openSoundsFolder");
+			SwingUtilities.invokeLater(() -> SettingsCheckbox.clear(AllDropSoundsConfig.OPEN_SOUNDS_FOLDER));
 		}
 		refreshHighlightedLists();
 	}

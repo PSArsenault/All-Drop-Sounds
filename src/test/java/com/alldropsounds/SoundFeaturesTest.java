@@ -4,6 +4,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -91,5 +94,18 @@ public class SoundFeaturesTest
 		Assert.assertFalse(UniqueItems.isUnique("Burnt shrimp", false, 0, 0));
 		Assert.assertTrue(UniqueItems.isUnique("Some unique token", false, 0, 0));
 		Assert.assertFalse(UniqueItems.isUnique("Some unique token", true, 50, 1));
+	}
+
+	@Test
+	public void openSoundsFolderBoxClearsAfterTheFolderOpens()
+	{
+		JPanel row = new JPanel();
+		JCheckBox box = new JCheckBox();
+		box.setSelected(true);
+		row.add(new JLabel(AllDropSoundsConfig.OPEN_SOUNDS_FOLDER));
+		row.add(box);
+
+		Assert.assertTrue(SettingsCheckbox.clear(row, AllDropSoundsConfig.OPEN_SOUNDS_FOLDER));
+		Assert.assertFalse(box.isSelected());
 	}
 }
