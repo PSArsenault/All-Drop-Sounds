@@ -31,8 +31,10 @@ The main **Item volume** setting applies only to those item files. Tier files us
 
 One sound plays per item name when:
 
-- the item appears on the ground as your drop or a group drop (dropping an item from your inventory is skipped)
+- the item appears on the ground as your drop or a group drop
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
+
+**Items you drop** controls items you place on the ground from your inventory. It is off by default, so those drops stay silent until you turn it on.
 
 Ground sounds stay quiet until the scene has finished loading, so items already on the ground at login stay silent.
 
@@ -43,6 +45,7 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 - Ground drops
 - Chest loot
 - Only your drops
+- Items you drop
 - Price source
 - Low, Medium, High, Insane, Insane+, and Insane++ start price and volume
 

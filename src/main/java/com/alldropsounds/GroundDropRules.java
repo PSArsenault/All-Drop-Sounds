@@ -21,6 +21,11 @@ public final class GroundDropRules
 		return tickCount < blockUntilTick;
 	}
 
+	public static boolean skipSelfDrop(boolean playItemsYouDrop, Integer droppedAtTick, int tickCount)
+	{
+		return !playItemsYouDrop && wasJustDropped(droppedAtTick, tickCount);
+	}
+
 	public static boolean wasJustDropped(Integer droppedAtTick, int tickCount)
 	{
 		if (droppedAtTick == null)

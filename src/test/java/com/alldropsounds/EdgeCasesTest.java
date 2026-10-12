@@ -231,6 +231,11 @@ public class EdgeCasesTest
 		Assert.assertFalse(GroundDropRules.spawnBlocked(6, 6));
 		Assert.assertTrue(GroundDropRules.spawnBlocked(0, Integer.MAX_VALUE));
 
+		Assert.assertFalse(GroundDropRules.skipSelfDrop(true, 10, 10));
+		Assert.assertTrue(GroundDropRules.skipSelfDrop(false, 10, 10));
+		Assert.assertFalse(GroundDropRules.skipSelfDrop(false, null, 10));
+		Assert.assertFalse(GroundDropRules.skipSelfDrop(false, 10, 12));
+
 		Assert.assertFalse(GroundDropRules.wasJustDropped(null, 10));
 		Assert.assertTrue(GroundDropRules.wasJustDropped(10, 10));
 		Assert.assertTrue(GroundDropRules.wasJustDropped(10, 11));

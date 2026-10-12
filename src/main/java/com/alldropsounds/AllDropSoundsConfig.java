@@ -14,7 +14,7 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigSection(
 		name = "Value sounds",
 		description = "Tier wavs used when an item does not have its own file.",
-		position = 5
+		position = 6
 	)
 	String valueSounds = "valueSounds";
 
@@ -72,6 +72,17 @@ public interface AllDropSoundsConfig extends Config
 	default boolean onlyYourDrops()
 	{
 		return true;
+	}
+
+	@ConfigItem(
+		keyName = "playSelfDrops",
+		name = "Items you drop",
+		description = "Play when you drop an item from your inventory onto the ground.",
+		position = 5
+	)
+	default boolean playSelfDrops()
+	{
+		return false;
 	}
 
 	@ConfigItem(

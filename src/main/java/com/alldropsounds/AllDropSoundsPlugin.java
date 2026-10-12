@@ -186,7 +186,7 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			return;
 		}
-		if (wasJustDropped(tileItem.getId()))
+		if (skipSelfDrop(tileItem.getId()))
 		{
 			return;
 		}
@@ -419,10 +419,10 @@ public class AllDropSoundsPlugin extends Plugin
 		return itemManager.canonicalize(itemId);
 	}
 
-	private boolean wasJustDropped(int itemId)
+	private boolean skipSelfDrop(int itemId)
 	{
 		Integer tick = droppedAtTick.get(canonical(itemId));
-		return GroundDropRules.wasJustDropped(tick, client.getTickCount());
+		return GroundDropRules.skipSelfDrop(config.playSelfDrops(), tick, client.getTickCount());
 	}
 
 	private static boolean isYourDrop(TileItem tileItem)
