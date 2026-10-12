@@ -74,3 +74,7 @@ gradle shadowJar
 ```
 
 Copy `build\libs\all-drop-sounds-1.0.0-all.jar` to `%USERPROFILE%\.runelite\sideloaded-plugins` and start RuneLite with `--developer-mode`.
+
+## Contributing
+
+Pull requests target `master`. Topic branches use `feat/`, `fix/`, or `docs/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
