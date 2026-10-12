@@ -337,12 +337,40 @@ public class AllDropSoundsPlugin extends Plugin
 			return;
 		}
 
-		Path wav = soundLibrary.findDropSound(name, tierFor(itemId, quantity));
-		if (wav == null)
+		Path specific = soundLibrary.find(name);
+		if (specific != null)
+		{
+			player.play(specific, config.itemVolume());
+			return;
+		}
+
+		ValueTier tier = tierFor(itemId, quantity);
+		if (tier == null)
 		{
 			return;
 		}
-		player.play(wav, config.volume());
+		player.play(soundLibrary.find(tier.getFileName()), volumeFor(tier));
+	}
+
+	private int volumeFor(ValueTier tier)
+	{
+		switch (tier)
+		{
+			case LOW:
+				return config.lowValueVolume();
+			case MEDIUM:
+				return config.mediumValueVolume();
+			case HIGH:
+				return config.highValueVolume();
+			case INSANE:
+				return config.insaneValueVolume();
+			case INSANE_PLUS:
+				return config.insanePlusValueVolume();
+			case INSANE_PLUS_PLUS:
+				return config.insanePlusPlusValueVolume();
+			default:
+				return 0;
+		}
 	}
 
 	private ValueTier tierFor(int itemId, int quantity)

@@ -32,11 +32,11 @@ public interface AllDropSoundsConfig extends Config
 	@Range(min = 0, max = 100)
 	@ConfigItem(
 		keyName = "volume",
-		name = "Volume",
-		description = "Playback volume. 0 is silent.",
+		name = "Item volume",
+		description = "Volume for wav files named after a specific item. 0 is silent.",
 		position = 1
 	)
-	default int volume()
+	default int itemVolume()
 	{
 		return 100;
 	}
@@ -98,11 +98,24 @@ public interface AllDropSoundsConfig extends Config
 		return 20_000;
 	}
 
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "lowValueVolume",
+		name = "Low volume",
+		description = "Volume for Low.wav. 0 is silent.",
+		position = 8,
+		section = valueSounds
+	)
+	default int lowValueVolume()
+	{
+		return 100;
+	}
+
 	@ConfigItem(
 		keyName = "mediumValuePrice",
 		name = "Medium price",
 		description = "Start price for Medium.wav. 0 disables this tier.",
-		position = 8,
+		position = 9,
 		section = valueSounds
 	)
 	default int mediumValuePrice()
@@ -110,11 +123,24 @@ public interface AllDropSoundsConfig extends Config
 		return 100_000;
 	}
 
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "mediumValueVolume",
+		name = "Medium volume",
+		description = "Volume for Medium.wav. 0 is silent.",
+		position = 10,
+		section = valueSounds
+	)
+	default int mediumValueVolume()
+	{
+		return 100;
+	}
+
 	@ConfigItem(
 		keyName = "highValuePrice",
 		name = "High price",
 		description = "Start price for High.wav. 0 disables this tier.",
-		position = 9,
+		position = 11,
 		section = valueSounds
 	)
 	default int highValuePrice()
@@ -122,11 +148,24 @@ public interface AllDropSoundsConfig extends Config
 		return 1_000_000;
 	}
 
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "highValueVolume",
+		name = "High volume",
+		description = "Volume for High.wav. 0 is silent.",
+		position = 12,
+		section = valueSounds
+	)
+	default int highValueVolume()
+	{
+		return 100;
+	}
+
 	@ConfigItem(
 		keyName = "insaneValuePrice",
 		name = "Insane price",
 		description = "Start price for Insane.wav. 0 disables this tier.",
-		position = 10,
+		position = 13,
 		section = valueSounds
 	)
 	default int insaneValuePrice()
@@ -134,11 +173,24 @@ public interface AllDropSoundsConfig extends Config
 		return 10_000_000;
 	}
 
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "insaneValueVolume",
+		name = "Insane volume",
+		description = "Volume for Insane.wav. 0 is silent.",
+		position = 14,
+		section = valueSounds
+	)
+	default int insaneValueVolume()
+	{
+		return 100;
+	}
+
 	@ConfigItem(
 		keyName = "insanePlusValuePrice",
 		name = "Insane+ price",
 		description = "Start price for Insane+.wav. 0 disables this tier.",
-		position = 11,
+		position = 15,
 		section = valueSounds
 	)
 	default int insanePlusValuePrice()
@@ -146,15 +198,41 @@ public interface AllDropSoundsConfig extends Config
 		return 50_000_000;
 	}
 
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "insanePlusValueVolume",
+		name = "Insane+ volume",
+		description = "Volume for Insane+.wav. 0 is silent.",
+		position = 16,
+		section = valueSounds
+	)
+	default int insanePlusValueVolume()
+	{
+		return 100;
+	}
+
 	@ConfigItem(
 		keyName = "insanePlusPlusValuePrice",
 		name = "Insane++ price",
 		description = "Start price for Insane++.wav. 0 disables this tier.",
-		position = 12,
+		position = 17,
 		section = valueSounds
 	)
 	default int insanePlusPlusValuePrice()
 	{
 		return 250_000_000;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "insanePlusPlusValueVolume",
+		name = "Insane++ volume",
+		description = "Volume for Insane++.wav. 0 is silent.",
+		position = 18,
+		section = valueSounds
+	)
+	default int insanePlusPlusValueVolume()
+	{
+		return 100;
 	}
 }
