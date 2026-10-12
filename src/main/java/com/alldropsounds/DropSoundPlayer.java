@@ -15,12 +15,7 @@ public final class DropSoundPlayer
 {
 	private static final Logger log = LoggerFactory.getLogger(DropSoundPlayer.class);
 
-	private final ExecutorService executor = Executors.newCachedThreadPool(runnable ->
-	{
-		Thread thread = new Thread(runnable, "all-drop-sounds");
-		thread.setDaemon(true);
-		return thread;
-	});
+	private ExecutorService executor;
 
 	public void play(Path wav, int volumePercent)
 	{
@@ -30,12 +25,29 @@ public final class DropSoundPlayer
 		}
 
 		int volume = Math.min(100, volumePercent);
-		executor.execute(() -> playNow(wav, volume));
+		executor().execute(() -> playNow(wav, volume));
 	}
 
 	public void shutdown()
 	{
-		executor.shutdownNow();
+		if (executor != null)
+		{
+			executor.shutdownNow();
+		}
+	}
+
+	private ExecutorService executor()
+	{
+		if (executor == null || executor.isShutdown())
+		{
+			executor = Executors.newCachedThreadPool(runnable ->
+			{
+				Thread thread = new Thread(runnable, "all-drop-sounds");
+				thread.setDaemon(true);
+				return thread;
+			});
+		}
+		return executor;
 	}
 
 	static float decibels(int volumePercent)

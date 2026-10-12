@@ -83,23 +83,22 @@ public class AllDropSoundsPlugin extends Plugin
 	{
 		Path folder = resolveFolder();
 		soundLibrary.setFolder(folder);
-		resetInventoryWatch();
 		droppedAtTick.clear();
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		pendingRewardGroup = -1;
+		blockGroundSoundsUntilTick = Integer.MAX_VALUE;
 
-		if (client.getGameState() == GameState.LOGGED_IN)
+		clientThread.invokeLater(() ->
 		{
-			blockGroundSoundsUntilTick = client.getTickCount();
-			announceFolder(folder);
-		}
-		else
-		{
-			blockGroundSoundsUntilTick = Integer.MAX_VALUE;
-		}
-
-		log.info("All Drop Sounds folder: {} ({} wav files)", folder, soundLibrary.size());
+			resetInventoryWatch();
+			if (client.getGameState() == GameState.LOGGED_IN)
+			{
+				blockGroundSoundsUntilTick = client.getTickCount();
+				announceFolder(folder);
+			}
+			log.info("All Drop Sounds folder: {} ({} wav files)", folder, soundLibrary.size());
+		});
 	}
 
 	@Override
