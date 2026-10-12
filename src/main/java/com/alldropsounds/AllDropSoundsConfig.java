@@ -12,18 +12,92 @@ public interface AllDropSoundsConfig extends Config
 	String GROUP = "alldropsounds";
 
 	@ConfigSection(
+		name = "Sound volume",
+		description = "Volume for each kind of drop sound. 0 is silent. Master volume scales every sound.",
+		position = 6
+	)
+	String soundVolume = "soundVolume";
+
+	@ConfigSection(
 		name = "Value sounds",
-		description = "Tier wavs used when an item does not have its own file, is not highlighted, and is not an untradeable unique.",
-		position = 10
+		description = "Start prices for tier wavs used when an item has no file of its own, is not highlighted, and is not an untradeable unique.",
+		position = 7
 	)
 	String valueSounds = "valueSounds";
+
+	@ConfigItem(
+		keyName = "openSoundsFolder",
+		name = "Open sounds folder",
+		description = "Open the folder where wav files are stored. The box clears after the folder opens.",
+		position = 0
+	)
+	default boolean openSoundsFolder()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "playGroundDrops",
+		name = "Ground drops",
+		description = "Play when one of your items appears on the ground.",
+		position = 1
+	)
+	default boolean playGroundDrops()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "playChestLoot",
+		name = "Chest loot",
+		description = "Play when an item is received from a chest, including Barrows, the Gauntlet, and raid chests.",
+		position = 2
+	)
+	default boolean playChestLoot()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "onlyYourDrops",
+		name = "Only your drops",
+		description = "Ground sounds play for your drops and group drops.",
+		position = 3
+	)
+	default boolean onlyYourDrops()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "ignoredItems",
+		name = "Ignored items",
+		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
+		position = 4
+	)
+	default String ignoredItems()
+	{
+		return "";
+	}
+
+	@ConfigItem(
+		keyName = "playUniques",
+		name = "Untradeable uniques",
+		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
+		position = 5
+	)
+	default boolean playUniques()
+	{
+		return true;
+	}
 
 	@Range(min = 0, max = 100)
 	@ConfigItem(
 		keyName = "masterVolume",
 		name = "Master volume",
 		description = "Scales every drop sound. 0 is silent.",
-		position = 0
+		position = 0,
+		section = soundVolume
 	)
 	default int masterVolume()
 	{
@@ -35,66 +109,12 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "volume",
 		name = "Specific drop volume",
 		description = "Volume for wav files named after a specific item. 0 is silent.",
-		position = 1
+		position = 1,
+		section = soundVolume
 	)
 	default int itemVolume()
 	{
 		return 100;
-	}
-
-	@ConfigItem(
-		keyName = "openSoundsFolder",
-		name = "Open sounds folder",
-		description = "Open the folder where wav files are stored. The box clears after the folder opens.",
-		position = 5
-	)
-	default boolean openSoundsFolder()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-		keyName = "playGroundDrops",
-		name = "Ground drops",
-		description = "Play when one of your items appears on the ground.",
-		position = 2
-	)
-	default boolean playGroundDrops()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = "playChestLoot",
-		name = "Chest loot",
-		description = "Play when an item is received from a chest, including Barrows, the Gauntlet, and raid chests.",
-		position = 3
-	)
-	default boolean playChestLoot()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = "onlyYourDrops",
-		name = "Only your drops",
-		description = "Ground sounds play for your drops and group drops.",
-		position = 4
-	)
-	default boolean onlyYourDrops()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = "ignoredItems",
-		name = "Ignored items",
-		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
-		position = 6
-	)
-	default String ignoredItems()
-	{
-		return "";
 	}
 
 	@Range(min = 0, max = 100)
@@ -102,22 +122,12 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "highlightedVolume",
 		name = "Highlighted volume",
 		description = "Volume for highlighted.wav. Names come from the Ground Items highlighted list and any other plugin that stores one. 0 is silent.",
-		position = 7
+		position = 2,
+		section = soundVolume
 	)
 	default int highlightedVolume()
 	{
 		return 100;
-	}
-
-	@ConfigItem(
-		keyName = "playUniques",
-		name = "Untradeable uniques",
-		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
-		position = 8
-	)
-	default boolean playUniques()
-	{
-		return true;
 	}
 
 	@Range(min = 0, max = 100)
@@ -125,9 +135,88 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "uniqueVolume",
 		name = "Unique volume",
 		description = "Volume for category wavs such as pets.wav, jars.wav, champions.wav, and Unique.wav. 0 is silent.",
-		position = 9
+		position = 3,
+		section = soundVolume
 	)
 	default int uniqueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "lowValueVolume",
+		name = "Low volume",
+		description = "Volume for Low.wav. 0 is silent.",
+		position = 4,
+		section = soundVolume
+	)
+	default int lowValueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "mediumValueVolume",
+		name = "Medium volume",
+		description = "Volume for Medium.wav. 0 is silent.",
+		position = 5,
+		section = soundVolume
+	)
+	default int mediumValueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "highValueVolume",
+		name = "High volume",
+		description = "Volume for High.wav. 0 is silent.",
+		position = 6,
+		section = soundVolume
+	)
+	default int highValueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "insaneValueVolume",
+		name = "Insane volume",
+		description = "Volume for Insane.wav. 0 is silent.",
+		position = 7,
+		section = soundVolume
+	)
+	default int insaneValueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "insanePlusValueVolume",
+		name = "Insane+ volume",
+		description = "Volume for Insane+.wav. 0 is silent.",
+		position = 8,
+		section = soundVolume
+	)
+	default int insanePlusValueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "insanePlusPlusValueVolume",
+		name = "Insane++ volume",
+		description = "Volume for Insane++.wav. 0 is silent.",
+		position = 9,
+		section = soundVolume
+	)
+	default int insanePlusPlusValueVolume()
 	{
 		return 100;
 	}
@@ -136,7 +225,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "priceSource",
 		name = "Price source",
 		description = "Which price is compared with the tier start prices. Stacks use price times quantity.",
-		position = 6,
+		position = 0,
 		section = valueSounds
 	)
 	default PriceSource priceSource()
@@ -148,7 +237,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "lowValuePrice",
 		name = "Low price",
 		description = "Start price for Low.wav. Items below every tier play no tier sound. 0 disables this tier.",
-		position = 7,
+		position = 1,
 		section = valueSounds
 	)
 	default int lowValuePrice()
@@ -156,24 +245,11 @@ public interface AllDropSoundsConfig extends Config
 		return 20_000;
 	}
 
-	@Range(min = 0, max = 100)
-	@ConfigItem(
-		keyName = "lowValueVolume",
-		name = "Low volume",
-		description = "Volume for Low.wav. 0 is silent.",
-		position = 8,
-		section = valueSounds
-	)
-	default int lowValueVolume()
-	{
-		return 100;
-	}
-
 	@ConfigItem(
 		keyName = "mediumValuePrice",
 		name = "Medium price",
 		description = "Start price for Medium.wav. 0 disables this tier.",
-		position = 9,
+		position = 2,
 		section = valueSounds
 	)
 	default int mediumValuePrice()
@@ -181,24 +257,11 @@ public interface AllDropSoundsConfig extends Config
 		return 100_000;
 	}
 
-	@Range(min = 0, max = 100)
-	@ConfigItem(
-		keyName = "mediumValueVolume",
-		name = "Medium volume",
-		description = "Volume for Medium.wav. 0 is silent.",
-		position = 10,
-		section = valueSounds
-	)
-	default int mediumValueVolume()
-	{
-		return 100;
-	}
-
 	@ConfigItem(
 		keyName = "highValuePrice",
 		name = "High price",
 		description = "Start price for High.wav. 0 disables this tier.",
-		position = 11,
+		position = 3,
 		section = valueSounds
 	)
 	default int highValuePrice()
@@ -206,24 +269,11 @@ public interface AllDropSoundsConfig extends Config
 		return 1_000_000;
 	}
 
-	@Range(min = 0, max = 100)
-	@ConfigItem(
-		keyName = "highValueVolume",
-		name = "High volume",
-		description = "Volume for High.wav. 0 is silent.",
-		position = 12,
-		section = valueSounds
-	)
-	default int highValueVolume()
-	{
-		return 100;
-	}
-
 	@ConfigItem(
 		keyName = "insaneValuePrice",
 		name = "Insane price",
 		description = "Start price for Insane.wav. 0 disables this tier.",
-		position = 13,
+		position = 4,
 		section = valueSounds
 	)
 	default int insaneValuePrice()
@@ -231,24 +281,11 @@ public interface AllDropSoundsConfig extends Config
 		return 10_000_000;
 	}
 
-	@Range(min = 0, max = 100)
-	@ConfigItem(
-		keyName = "insaneValueVolume",
-		name = "Insane volume",
-		description = "Volume for Insane.wav. 0 is silent.",
-		position = 14,
-		section = valueSounds
-	)
-	default int insaneValueVolume()
-	{
-		return 100;
-	}
-
 	@ConfigItem(
 		keyName = "insanePlusValuePrice",
 		name = "Insane+ price",
 		description = "Start price for Insane+.wav. 0 disables this tier.",
-		position = 15,
+		position = 5,
 		section = valueSounds
 	)
 	default int insanePlusValuePrice()
@@ -256,41 +293,15 @@ public interface AllDropSoundsConfig extends Config
 		return 50_000_000;
 	}
 
-	@Range(min = 0, max = 100)
-	@ConfigItem(
-		keyName = "insanePlusValueVolume",
-		name = "Insane+ volume",
-		description = "Volume for Insane+.wav. 0 is silent.",
-		position = 16,
-		section = valueSounds
-	)
-	default int insanePlusValueVolume()
-	{
-		return 100;
-	}
-
 	@ConfigItem(
 		keyName = "insanePlusPlusValuePrice",
 		name = "Insane++ price",
 		description = "Start price for Insane++.wav. 0 disables this tier.",
-		position = 17,
+		position = 6,
 		section = valueSounds
 	)
 	default int insanePlusPlusValuePrice()
 	{
 		return 250_000_000;
-	}
-
-	@Range(min = 0, max = 100)
-	@ConfigItem(
-		keyName = "insanePlusPlusValueVolume",
-		name = "Insane++ volume",
-		description = "Volume for Insane++.wav. 0 is silent.",
-		position = 18,
-		section = valueSounds
-	)
-	default int insanePlusPlusValueVolume()
-	{
-		return 100;
 	}
 }

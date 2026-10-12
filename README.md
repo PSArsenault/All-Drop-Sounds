@@ -6,7 +6,7 @@ RuneLite plugin that plays a custom wav when an item drops on the ground or come
 
 Wav files go in `%USERPROFILE%\.runelite\plugin-data\all-drop-sounds`. The plugin creates that folder on startup and names the path in chat after you log in. Open sounds folder in the settings opens it. Tick the box once; it clears after the folder opens.
 
-**Master volume** is at the top of the settings and scales every sound. 0 is silent. Sounds also follow the in-game master and sound-effects sliders, and they stop when those sliders are muted.
+**Master volume** is the first control in Sound volume and scales every sound. 0 is silent. Sounds also follow the in-game master and sound-effects sliders, and they stop when those sliders are muted.
 
 An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `skotos.wav` and `tiny tempor.wav` play for those pets. A file is a wildcard only when its name contains `%`, so `Clue scroll%.wav` matches every clue scroll and `Clue scroll.wav` matches only that exact name.
 
@@ -40,7 +40,7 @@ Insane+.wav
 Insane++.wav
 ```
 
-Default start prices are 20,000, 100,000, 1,000,000, 10,000,000, 50,000,000, and 250,000,000. Each tier has its own volume. A start price of 0 disables that tier. A stack below every enabled tier plays no tier sound.
+Default start prices are 20,000, 100,000, 1,000,000, 10,000,000, 50,000,000, and 250,000,000. Each tier has its own volume in Sound volume. A start price of 0 disables that tier. A stack below every enabled tier plays no tier sound.
 
 One sound plays per item name when:
 
@@ -55,19 +55,25 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 
 ## Settings
 
-- Master volume
-- Specific drop volume
 - Open sounds folder
 - Ground drops
 - Chest loot
 - Only your drops
 - Ignored items
-- Highlighted volume
 - Untradeable uniques
-- Unique volume
-- Price source
-- Low, Medium, High, Insane, Insane+, and Insane++ start price and volume
 
+Sound volume:
+
+- Master volume
+- Specific drop volume
+- Highlighted volume
+- Unique volume
+- Low, Medium, High, Insane, Insane+, and Insane++ volume
+
+Value sounds:
+
+- Price source
+- Low, Medium, High, Insane, Insane+, and Insane++ start price
 ## Build and run
 
 Java 11 or newer, and Gradle 8. This repo has no Gradle wrapper.
