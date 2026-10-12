@@ -36,6 +36,8 @@ One sound plays per item name when:
 
 **Items you drop** controls items you place on the ground from your inventory. It is off by default, so those drops stay silent until you turn it on.
 
+**Ignored items** is a comma-separated list of item names. A listed item never plays a sound, including when a wav file exists for it or the stack is valuable enough for a tier. Matching ignores letter case.
+
 Ground sounds stay quiet until the scene has finished loading, so items already on the ground at login stay silent.
 
 ## Settings
@@ -46,6 +48,7 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 - Chest loot
 - Only your drops
 - Items you drop
+- Ignored items
 - Price source
 - Low, Medium, High, Insane, Insane+, and Insane++ start price and volume
 

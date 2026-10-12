@@ -342,6 +342,11 @@ public class AllDropSoundsPlugin extends Plugin
 			return;
 		}
 
+		if (IgnoredItems.contains(config.ignoredItems(), name))
+		{
+			return;
+		}
+
 		String key = name.toLowerCase(Locale.ENGLISH);
 		if (playedThisTick.contains(key))
 		{

@@ -14,7 +14,7 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigSection(
 		name = "Value sounds",
 		description = "Tier wavs used when an item does not have its own file.",
-		position = 6
+		position = 7
 	)
 	String valueSounds = "valueSounds";
 
@@ -83,6 +83,17 @@ public interface AllDropSoundsConfig extends Config
 	default boolean playSelfDrops()
 	{
 		return false;
+	}
+
+	@ConfigItem(
+		keyName = "ignoredItems",
+		name = "Ignored items",
+		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
+		position = 6
+	)
+	default String ignoredItems()
+	{
+		return "";
 	}
 
 	@ConfigItem(
