@@ -13,16 +13,28 @@ public interface AllDropSoundsConfig extends Config
 
 	@ConfigSection(
 		name = "Value sounds",
-		description = "Tier wavs used when an item does not have its own file and is not highlighted.",
-		position = 9
+		description = "Tier wavs used when an item does not have its own file, is not highlighted, and is not an untradeable unique.",
+		position = 12
 	)
 	String valueSounds = "valueSounds";
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "masterVolume",
+		name = "Master volume",
+		description = "Scales every drop sound. 0 is silent.",
+		position = 0
+	)
+	default int masterVolume()
+	{
+		return 100;
+	}
 
 	@ConfigItem(
 		keyName = "soundsFolder",
 		name = "Sounds folder",
-		description = "Folder of wav files. An item file such as \"Twisted bow.wav\" overrides highlighted.wav and the tier files Low.wav, Medium.wav, High.wav, Insane.wav, Insane+.wav, and Insane++.wav. Leave blank to use .runelite/all-drop-sounds.",
-		position = 0
+		description = "Folder of wav files. An item file such as \"Twisted bow.wav\" overrides highlighted.wav, Unique.wav, and the tier files. \"Clue scroll.wav\" also matches \"Clue scroll (easy)\". Leave blank to use .runelite/all-drop-sounds.",
+		position = 1
 	)
 	default String soundsFolder()
 	{
@@ -34,7 +46,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "volume",
 		name = "Item volume",
 		description = "Volume for wav files named after a specific item. 0 is silent.",
-		position = 1
+		position = 2
 	)
 	default int itemVolume()
 	{
@@ -45,7 +57,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playGroundDrops",
 		name = "Ground drops",
 		description = "Play when one of your items appears on the ground.",
-		position = 2
+		position = 3
 	)
 	default boolean playGroundDrops()
 	{
@@ -56,7 +68,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playChestLoot",
 		name = "Chest loot",
 		description = "Play when an item is received from a chest, including Barrows, the Gauntlet, and raid chests.",
-		position = 3
+		position = 4
 	)
 	default boolean playChestLoot()
 	{
@@ -67,7 +79,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "onlyYourDrops",
 		name = "Only your drops",
 		description = "Ground sounds play for your drops and group drops.",
-		position = 4
+		position = 5
 	)
 	default boolean onlyYourDrops()
 	{
@@ -78,7 +90,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playSelfDrops",
 		name = "Items you drop",
 		description = "Play when you drop an item from your inventory onto the ground.",
-		position = 5
+		position = 6
 	)
 	default boolean playSelfDrops()
 	{
@@ -89,20 +101,9 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "ignoredItems",
 		name = "Ignored items",
 		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
-		position = 6
-	)
-	default String ignoredItems()
-	{
-		return "";
-	}
-
-	@ConfigItem(
-		keyName = "highlightedItems",
-		name = "Highlighted items",
-		description = "Comma-separated item names that play highlighted.wav. An item's own wav file still wins. Ignored items stay silent.",
 		position = 7
 	)
-	default String highlightedItems()
+	default String ignoredItems()
 	{
 		return "";
 	}
@@ -111,12 +112,47 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigItem(
 		keyName = "highlightedVolume",
 		name = "Highlighted volume",
-		description = "Volume for highlighted.wav. 0 is silent.",
+		description = "Volume for highlighted.wav. Names come from the Ground Items highlighted list and any other plugin that stores one. 0 is silent.",
 		position = 8
 	)
 	default int highlightedVolume()
 	{
 		return 100;
+	}
+
+	@ConfigItem(
+		keyName = "playUniques",
+		name = "Untradeable uniques",
+		description = "Play Unique.wav for pets and other untradeable uniques that have no price.",
+		position = 9
+	)
+	default boolean playUniques()
+	{
+		return true;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "uniqueVolume",
+		name = "Unique volume",
+		description = "Volume for Unique.wav. 0 is silent.",
+		position = 10
+	)
+	default int uniqueVolume()
+	{
+		return 100;
+	}
+
+	@Range(min = 0, max = 5000)
+	@ConfigItem(
+		keyName = "soundGap",
+		name = "Sound gap",
+		description = "Milliseconds to wait before another sound of the same or lower rarity. A rarer drop plays immediately and stops the current sound.",
+		position = 11
+	)
+	default int soundGap()
+	{
+		return 400;
 	}
 
 	@ConfigItem(

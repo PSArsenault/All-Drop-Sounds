@@ -10,6 +10,18 @@ import java.nio.file.Path;
 public final class DropSoundPlan
 {
 	public static final String HIGHLIGHTED_FILE = "highlighted";
+	public static final String UNIQUE_FILE = "Unique";
+
+	public static int applyMaster(int volume, int masterVolume)
+	{
+		if (volume <= 0 || masterVolume <= 0)
+		{
+			return 0;
+		}
+
+		int scaled = (int) Math.round(Math.min(100, volume) * (Math.min(100, masterVolume) / 100.0));
+		return Math.min(100, Math.max(0, scaled));
+	}
 
 	public final Path file;
 	public final int volume;
