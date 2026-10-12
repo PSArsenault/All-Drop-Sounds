@@ -1,0 +1,10 @@
+---
+description: Keep README.md aligned with plugin behavior, settings, and how to run
+alwaysApply: true
+---
+
+# README
+
+When a change affects plugin behavior, settings, sound files, tiers, volumes, chest detection, or how to build and run, update README.md in the same change.
+
+Write README.md as UTF-8 without a byte-order mark. Do not leave it as UTF-16.

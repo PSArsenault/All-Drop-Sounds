@@ -1,10 +1,14 @@
 # All Drop Sounds
 
-RuneLite plugin that plays a custom sound when a specific item drops on the ground or is received from a chest.
+RuneLite plugin that plays a custom wav when an item drops on the ground or comes from a chest.
 
-Tier sounds cover drops by Grand Exchange or high alchemy value. Put these files in the sounds folder:
+## Sounds
 
-```text
+Wav files go in the sounds folder. The default is `%USERPROFILE%\.runelite\all-drop-sounds`. The plugin creates that folder on startup and names the path in chat after you log in. Another folder can be set in the plugin settings.
+
+When an item has no file of its own, the plugin plays the highest price tier the stack still meets. A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default).
+
+```
 Low.wav
 Medium.wav
 High.wav
@@ -13,35 +17,50 @@ Insane+.wav
 Insane++.wav
 ```
 
-The default start prices are 20,000, 100,000, 1,000,000, 10,000,000, 50,000,000, and 250,000,000. Each one is a setting, and 0 turns that tier off. A stack is priced as unit price times quantity, and the highest tier it still meets is the one that plays.
+Default start prices are 20,000, 100,000, 1,000,000, 10,000,000, 50,000,000, and 250,000,000. Each tier has its own volume. A start price of 0 disables that tier. A stack below every enabled tier plays no tier sound.
 
-An item file overrides the tier sound. The file name is the item's exact name:
+An item file overrides the tier sound. The file name is the item's exact name, and matching ignores letter case:
 
-```text
+```
 Twisted bow.wav
 Enhanced crystal weapon seed.wav
 Dharok's helm.wav
 ```
 
-Matching ignores letter case. A sound plays once per item name when:
+The main **Item volume** setting applies only to those item files. Tier files use the volume next to that tier. A volume of 0 is silent.
 
-- the item appears on the ground as your drop or a group drop (items you drop yourself are ignored)
+One sound plays per item name when:
+
+- the item appears on the ground as your drop or a group drop (dropping an item from your inventory is skipped)
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
 
-The default folder is `%userprofile%\.runelite\all-drop-sounds`. The plugin creates it and names the path in chat when you log in. You can choose another folder in the plugin settings.
+Ground sounds stay quiet until the scene has finished loading, so items already on the ground at login stay silent.
 
-## Run it
+## Settings
 
-This machine needs a JDK. From this folder:
+- Sounds folder
+- Item volume
+- Ground drops
+- Chest loot
+- Only your drops
+- Price source
+- Low, Medium, High, Insane, Insane+, and Insane++ start price and volume
+
+## Build and run
+
+Java 11 or newer, and Gradle 8. This repo has no Gradle wrapper.
 
 ```powershell
-.\gradlew.bat run
+gradle test
+gradle run
 ```
 
-That starts RuneLite in developer mode with the plugin loaded. You can also build a sideload jar:
+`gradle run` starts RuneLite in developer mode with this plugin loaded. Sign in with a Jagex account through the Jagex launcher once so credentials are saved. The launcher itself cannot load this plugin, because it does not pass `--developer-mode`.
+
+A sideload jar:
 
 ```powershell
-.\gradlew.bat shadowJar
+gradle shadowJar
 ```
 
-Copy `build\libs\all-drop-sounds-1.0.0-all.jar` to `%userprofile%\.runelite\sideloaded-plugins` and start RuneLite with `--developer-mode`.
+Copy `build\libs\all-drop-sounds-1.0.0-all.jar` to `%USERPROFILE%\.runelite\sideloaded-plugins` and start RuneLite with `--developer-mode`.
