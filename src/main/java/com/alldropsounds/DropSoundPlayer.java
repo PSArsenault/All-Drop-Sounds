@@ -16,23 +16,54 @@ public final class DropSoundPlayer
 	private static final Logger log = LoggerFactory.getLogger(DropSoundPlayer.class);
 
 	private ExecutorService executor;
+	private volatile Clip active;
+	private int generation;
+	private int activePriority = SoundPriority.NONE;
 
 	public void play(Path wav, int volumePercent)
+	{
+		play(wav, volumePercent, 0);
+	}
+
+	public synchronized void play(Path wav, int volumePercent, int priority)
 	{
 		if (wav == null || volumePercent <= 0)
 		{
 			return;
 		}
 
+		int ticket = generation;
+		if (priority > activePriority)
+		{
+			ticket = ++generation;
+			stopActive();
+			activePriority = priority;
+		}
+
 		int volume = Math.min(100, volumePercent);
-		executor().execute(() -> playNow(wav, volume));
+		int playbackTicket = ticket;
+		executor().execute(() -> playNow(wav, volume, playbackTicket));
 	}
 
-	public void shutdown()
+	public synchronized void shutdown()
 	{
+		generation++;
+		stopActive();
+		activePriority = SoundPriority.NONE;
 		if (executor != null)
 		{
 			executor.shutdownNow();
+		}
+	}
+
+	private void stopActive()
+	{
+		Clip clip = active;
+		active = null;
+		if (clip != null)
+		{
+			clip.stop();
+			clip.close();
 		}
 	}
 
@@ -63,12 +94,32 @@ public final class DropSoundPlayer
 		return (float) (20.0 * Math.log10(volumePercent / 100.0));
 	}
 
-	private static void playNow(Path wav, int volumePercent)
+	private void playNow(Path wav, int volumePercent, int ticket)
 	{
 		try (AudioInputStream input = AudioSystem.getAudioInputStream(wav.toFile()))
 		{
 			Clip clip = AudioSystem.getClip();
-			clip.open(input);
+			try
+			{
+				clip.open(input);
+			}
+			catch (Exception ex)
+			{
+				clip.close();
+				log.warn("Could not play {}", wav, ex);
+				return;
+			}
+
+			synchronized (this)
+			{
+				if (ticket != generation)
+				{
+					clip.close();
+					return;
+				}
+				active = clip;
+			}
+
 			if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN))
 			{
 				FloatControl gain = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);

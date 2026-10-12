@@ -228,6 +228,9 @@ public class EdgeCasesTest
 		Assert.assertNull(DropSoundPlan.choose(null, highlighted, low, 40, 0, 90));
 		Assert.assertEquals(low, DropSoundPlan.choose(null, null, low, 40, 70, 90).file);
 		Assert.assertEquals(100, DropSoundPlan.choose(null, highlighted, null, 1, 250, 90).volume);
+		Assert.assertEquals(50, DropSoundPlan.applyMaster(100, 50));
+		Assert.assertEquals(0, DropSoundPlan.applyMaster(80, 0));
+		Assert.assertEquals(25, DropSoundPlan.applyMaster(50, 50));
 	}
 
 	@Test
@@ -247,14 +250,20 @@ public class EdgeCasesTest
 		Assert.assertFalse(GroundDropRules.skipSelfDrop(true, 10, 10));
 		Assert.assertTrue(GroundDropRules.skipSelfDrop(false, 10, 10));
 		Assert.assertFalse(GroundDropRules.skipSelfDrop(false, null, 10));
-		Assert.assertFalse(GroundDropRules.skipSelfDrop(false, 10, 12));
+		Assert.assertTrue(GroundDropRules.skipSelfDrop(false, 10, 12));
+		Assert.assertTrue(GroundDropRules.shouldPlay(true, true, TileItem.OWNERSHIP_NONE, true));
+		Assert.assertFalse(GroundDropRules.shouldPlay(false, false, TileItem.OWNERSHIP_SELF, true));
+		Assert.assertFalse(GroundDropRules.shouldPlay(true, true, TileItem.OWNERSHIP_NONE, false));
+		Assert.assertTrue(GroundDropRules.shouldPlay(true, true, TileItem.OWNERSHIP_SELF, false));
+		Assert.assertTrue(GroundDropRules.isRememberedDrop(11, 10));
 
 		Assert.assertFalse(GroundDropRules.wasJustDropped(null, 10));
 		Assert.assertTrue(GroundDropRules.wasJustDropped(10, 10));
 		Assert.assertTrue(GroundDropRules.wasJustDropped(10, 11));
 		Assert.assertFalse(GroundDropRules.wasJustDropped(10, 12));
 		Assert.assertFalse(GroundDropRules.dropExpired(10, 12));
-		Assert.assertTrue(GroundDropRules.dropExpired(10, 13));
+		Assert.assertFalse(GroundDropRules.dropExpired(10, 13));
+		Assert.assertTrue(GroundDropRules.dropExpired(10, 15));
 	}
 
 	@Test

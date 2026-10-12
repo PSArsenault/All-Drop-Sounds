@@ -3,8 +3,11 @@ package com.alldropsounds;
 import com.google.inject.Provides;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +26,10 @@ import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.api.events.WidgetClosed;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.ItemComposition;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
+import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -62,6 +67,9 @@ public class AllDropSoundsPlugin extends Plugin
 	private ItemManager itemManager;
 
 	@Inject
+	private ConfigManager configManager;
+
+	@Inject
 	private AllDropSoundsConfig config;
 
 	private final SoundLibrary soundLibrary = new SoundLibrary();
@@ -74,12 +82,14 @@ public class AllDropSoundsPlugin extends Plugin
 	private int blockGroundSoundsUntilTick = Integer.MAX_VALUE;
 	private int pendingRewardGroup = -1;
 	private int pendingRewardTicks;
+	private List<String> highlightedLists = Collections.emptyList();
 
 	@Override
 	protected void startUp()
 	{
 		Path folder = resolveFolder();
 		soundLibrary.setFolder(folder);
+		refreshHighlightedLists();
 		droppedAtTick.clear();
 		playedRewardGroups.clear();
 		playedThisTick.clear();
@@ -138,11 +148,7 @@ public class AllDropSoundsPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
-		if (!AllDropSoundsConfig.GROUP.equals(event.getGroup()))
-		{
-			return;
-		}
-		soundLibrary.setFolder(resolveFolder());
+		refreshHighlightedLists();
 	}
 
 	@Subscribe
@@ -182,11 +188,8 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			return;
 		}
-		if (config.onlyYourDrops() && !isYourDrop(tileItem))
-		{
-			return;
-		}
-		if (skipSelfDrop(tileItem.getId()))
+		boolean remembered = GroundDropRules.isRememberedDrop(droppedAtTick.get(canonical(tileItem.getId())), client.getTickCount());
+		if (!GroundDropRules.shouldPlay(config.playSelfDrops(), config.onlyYourDrops(), tileItem.getOwnership(), remembered))
 		{
 			return;
 		}
@@ -354,16 +357,27 @@ public class AllDropSoundsPlugin extends Plugin
 		}
 
 		Path specific = soundLibrary.find(name);
-		boolean highlighted = specific == null && IgnoredItems.contains(config.highlightedItems(), name);
-		Path highlightedFile = highlighted ? soundLibrary.find(DropSoundPlan.HIGHLIGHTED_FILE) : null;
-		ValueTier tier = specific == null && highlightedFile == null ? tierFor(itemId, quantity) : null;
+		ValueTier valueTier = tierFor(itemId, quantity);
+		boolean highlighted = specific == null && HighlightedLists.matches(highlightedLists, name, quantity);
+		Path highlightedFile = highlighted ? soundLibrary.findExact(DropSoundPlan.HIGHLIGHTED_FILE) : null;
+		boolean unique = specific == null && highlightedFile == null && config.playUniques() && isUnique(itemId, name);
+		Path uniqueFile = null;
+		if (unique)
+		{
+			uniqueFile = soundLibrary.findExact(UniqueItems.categoryStem(name));
+			if (uniqueFile == null)
+			{
+				uniqueFile = soundLibrary.findExact(DropSoundPlan.UNIQUE_FILE);
+			}
+		}
+		ValueTier tier = specific == null && highlightedFile == null && uniqueFile == null ? valueTier : null;
 		Path tierFile = tier == null ? null : soundLibrary.find(tier.getFileName());
 		DropSoundPlan plan = DropSoundPlan.choose(
 			specific,
-			highlightedFile,
+			highlightedFile != null ? highlightedFile : uniqueFile,
 			tierFile,
 			config.itemVolume(),
-			config.highlightedVolume(),
+			highlightedFile != null ? config.highlightedVolume() : config.uniqueVolume(),
 			tier == null ? 0 : volumeFor(tier)
 		);
 		if (plan == null)
@@ -371,8 +385,18 @@ public class AllDropSoundsPlugin extends Plugin
 			return;
 		}
 
+		int volume = GameAudio.applyOutput(
+			DropSoundPlan.applyMaster(plan.volume, config.masterVolume()),
+			gameVolumePercent()
+		);
+		if (volume <= 0)
+		{
+			return;
+		}
+
+		int priority = SoundPriority.rank(valueTier, specific != null, highlightedFile != null, uniqueFile != null);
+		player.play(plan.file, volume, priority);
 		playedThisTick.add(key);
-		player.play(plan.file, plan.volume);
 	}
 
 	private int volumeFor(ValueTier tier)
@@ -413,6 +437,57 @@ public class AllDropSoundsPlugin extends Plugin
 		);
 	}
 
+	private boolean isUnique(int itemId, String name)
+	{
+		int id = canonical(itemId);
+		ItemComposition composition = itemManager.getItemComposition(id);
+		long gePrice = itemManager.getItemPrice(id);
+		long haPrice = composition.getHaPrice();
+		return UniqueItems.isUnique(name, composition.isTradeable(), gePrice, haPrice);
+	}
+
+	private int gameVolumePercent()
+	{
+		try
+		{
+			return GameAudio.outputPercent(
+				client.getVarpValue(VarPlayerID.OPTION_MASTER_VOLUME),
+				client.getVarpValue(VarPlayerID.OPTION_SOUNDS)
+			);
+		}
+		catch (Exception ex)
+		{
+			return 100;
+		}
+	}
+
+	private void refreshHighlightedLists()
+	{
+		List<String> keys = configManager.getConfigurationKeys("");
+		List<String> lists = new ArrayList<String>();
+		if (keys != null)
+		{
+			for (String wholeKey : keys)
+			{
+				if (!HighlightedLists.isHighlightKey(wholeKey))
+				{
+					continue;
+				}
+				String[] parts = HighlightedLists.groupAndKey(wholeKey);
+				if (parts == null)
+				{
+					continue;
+				}
+				String value = configManager.getConfiguration(parts[0], parts[1]);
+				if (HighlightedLists.isItemList(value))
+				{
+					lists.add(value);
+				}
+			}
+		}
+		highlightedLists = lists;
+	}
+
 	private String itemName(int itemId)
 	{
 		String name = itemManager.getItemComposition(canonical(itemId)).getName();
@@ -426,17 +501,6 @@ public class AllDropSoundsPlugin extends Plugin
 	private int canonical(int itemId)
 	{
 		return itemManager.canonicalize(itemId);
-	}
-
-	private boolean skipSelfDrop(int itemId)
-	{
-		Integer tick = droppedAtTick.get(canonical(itemId));
-		return GroundDropRules.skipSelfDrop(config.playSelfDrops(), tick, client.getTickCount());
-	}
-
-	private static boolean isYourDrop(TileItem tileItem)
-	{
-		return GroundDropRules.isYourDrop(tileItem.getOwnership());
 	}
 
 	private boolean inTobChestRegion()
@@ -493,16 +557,7 @@ public class AllDropSoundsPlugin extends Plugin
 
 	private Path resolveFolder()
 	{
-		String configured = config.soundsFolder();
-		Path folder;
-		if (configured == null || configured.trim().isEmpty())
-		{
-			folder = new File(RuneLite.RUNELITE_DIR, "all-drop-sounds").toPath();
-		}
-		else
-		{
-			folder = new File(configured.trim()).toPath();
-		}
+		Path folder = new File(RuneLite.RUNELITE_DIR, "plugin-data/all-drop-sounds").toPath();
 
 		File directory = folder.toFile();
 		if (!directory.isDirectory() && !directory.mkdirs())

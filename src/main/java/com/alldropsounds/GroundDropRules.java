@@ -21,9 +21,35 @@ public final class GroundDropRules
 		return tickCount < blockUntilTick;
 	}
 
+	public static final int SELF_DROP_WINDOW = 4;
+
+	public static boolean shouldPlay(boolean playItemsYouDrop, boolean onlyYourDrops, int ownership, boolean rememberedSelfDrop)
+	{
+		if (rememberedSelfDrop)
+		{
+			return playItemsYouDrop;
+		}
+		if (onlyYourDrops && !isYourDrop(ownership))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isRememberedDrop(Integer droppedAtTick, int spawnTick)
+	{
+		if (droppedAtTick == null)
+		{
+			return false;
+		}
+
+		long delta = (long) spawnTick - droppedAtTick;
+		return delta >= -SELF_DROP_WINDOW && delta <= SELF_DROP_WINDOW;
+	}
+
 	public static boolean skipSelfDrop(boolean playItemsYouDrop, Integer droppedAtTick, int tickCount)
 	{
-		return !playItemsYouDrop && wasJustDropped(droppedAtTick, tickCount);
+		return !playItemsYouDrop && isRememberedDrop(droppedAtTick, tickCount);
 	}
 
 	public static boolean wasJustDropped(Integer droppedAtTick, int tickCount)
@@ -40,6 +66,6 @@ public final class GroundDropRules
 	public static boolean dropExpired(int droppedAtTick, int tickCount)
 	{
 		long delta = (long) tickCount - droppedAtTick;
-		return delta > 2;
+		return delta > SELF_DROP_WINDOW;
 	}
 }

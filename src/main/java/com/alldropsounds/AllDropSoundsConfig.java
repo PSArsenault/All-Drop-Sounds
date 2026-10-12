@@ -13,20 +13,21 @@ public interface AllDropSoundsConfig extends Config
 
 	@ConfigSection(
 		name = "Value sounds",
-		description = "Tier wavs used when an item does not have its own file and is not highlighted.",
-		position = 9
+		description = "Tier wavs used when an item does not have its own file, is not highlighted, and is not an untradeable unique.",
+		position = 10
 	)
 	String valueSounds = "valueSounds";
 
+	@Range(min = 0, max = 100)
 	@ConfigItem(
-		keyName = "soundsFolder",
-		name = "Sounds folder",
-		description = "Folder of wav files. An item file such as \"Twisted bow.wav\" overrides highlighted.wav and the tier files Low.wav, Medium.wav, High.wav, Insane.wav, Insane+.wav, and Insane++.wav. Leave blank to use .runelite/all-drop-sounds.",
+		keyName = "masterVolume",
+		name = "Master volume",
+		description = "Scales every drop sound. 0 is silent.",
 		position = 0
 	)
-	default String soundsFolder()
+	default int masterVolume()
 	{
-		return "";
+		return 100;
 	}
 
 	@Range(min = 0, max = 100)
@@ -96,25 +97,37 @@ public interface AllDropSoundsConfig extends Config
 		return "";
 	}
 
-	@ConfigItem(
-		keyName = "highlightedItems",
-		name = "Highlighted items",
-		description = "Comma-separated item names that play highlighted.wav. An item's own wav file still wins. Ignored items stay silent.",
-		position = 7
-	)
-	default String highlightedItems()
-	{
-		return "";
-	}
-
 	@Range(min = 0, max = 100)
 	@ConfigItem(
 		keyName = "highlightedVolume",
 		name = "Highlighted volume",
-		description = "Volume for highlighted.wav. 0 is silent.",
-		position = 8
+		description = "Volume for highlighted.wav. Names come from the Ground Items highlighted list and any other plugin that stores one. 0 is silent.",
+		position = 7
 	)
 	default int highlightedVolume()
+	{
+		return 100;
+	}
+
+	@ConfigItem(
+		keyName = "playUniques",
+		name = "Untradeable uniques",
+		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
+		position = 8
+	)
+	default boolean playUniques()
+	{
+		return true;
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "uniqueVolume",
+		name = "Unique volume",
+		description = "Volume for category wavs such as pets.wav, jars.wav, champions.wav, and Unique.wav. 0 is silent.",
+		position = 9
+	)
+	default int uniqueVolume()
 	{
 		return 100;
 	}
