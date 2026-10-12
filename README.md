@@ -24,7 +24,7 @@ When an item has no file of its own, the plugin picks the first match:
 2. `pets.wav`, `jars.wav`, or `champions.wav` for those untradeable uniques, then `Unique.wav` when the category file is missing
 3. The highest price tier the stack still meets
 
-A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default). If `highlighted.wav` or the unique category file is missing, the price tier sound is used. An exact item file still wins over its category, so `skotos.wav` plays instead of `pets.wav`. A volume of 0 stays silent. A rarer drop stops a cheaper sound that is already playing.
+A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default). If `highlighted.wav` or the unique category file is missing, the price tier sound is used. An exact item file still wins over its category, so `skotos.wav` plays instead of `pets.wav`. A volume of 0 stays silent. Sounds play through RuneLite's audio player. A new drop does not cut off a sound that is already playing.
 
 ```
 highlighted.wav
@@ -47,7 +47,7 @@ One sound plays per item name when:
 - the item appears on the ground as your drop or a group drop
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
 
-Items you drop from your inventory stay silent. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
+**Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
 **Ignored items** is a comma-separated list of item names. A listed item never plays a sound, including when a wav file exists for it or the stack is valuable enough for a tier. Matching ignores letter case.
 
@@ -59,6 +59,7 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 - Ground drops
 - Chest loot
 - Only your drops
+- Items you drop
 - Ignored items
 - Untradeable uniques
 

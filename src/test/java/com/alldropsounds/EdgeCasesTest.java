@@ -247,11 +247,11 @@ public class EdgeCasesTest
 		Assert.assertFalse(GroundDropRules.spawnBlocked(6, 6));
 		Assert.assertTrue(GroundDropRules.spawnBlocked(0, Integer.MAX_VALUE));
 
-		Assert.assertFalse(GroundDropRules.shouldPlay(true, TileItem.OWNERSHIP_NONE, true));
-		Assert.assertFalse(GroundDropRules.shouldPlay(false, TileItem.OWNERSHIP_SELF, true));
-		Assert.assertFalse(GroundDropRules.shouldPlay(true, TileItem.OWNERSHIP_NONE, false));
-		Assert.assertTrue(GroundDropRules.shouldPlay(true, TileItem.OWNERSHIP_SELF, false));
-		Assert.assertTrue(GroundDropRules.shouldPlay(false, TileItem.OWNERSHIP_OTHER, false));
+		Assert.assertTrue(GroundDropRules.shouldPlay(true, true, TileItem.OWNERSHIP_NONE, true));
+		Assert.assertFalse(GroundDropRules.shouldPlay(false, false, TileItem.OWNERSHIP_SELF, true));
+		Assert.assertFalse(GroundDropRules.shouldPlay(true, true, TileItem.OWNERSHIP_NONE, false));
+		Assert.assertTrue(GroundDropRules.shouldPlay(true, true, TileItem.OWNERSHIP_SELF, false));
+		Assert.assertTrue(GroundDropRules.shouldPlay(false, false, TileItem.OWNERSHIP_OTHER, false));
 		Assert.assertTrue(GroundDropRules.isManualDrop("Drop", true));
 		Assert.assertTrue(GroundDropRules.isManualDrop("drop", true));
 		Assert.assertFalse(GroundDropRules.isManualDrop("Drop", false));
