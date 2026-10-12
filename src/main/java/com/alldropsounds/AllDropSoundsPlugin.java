@@ -354,12 +354,16 @@ public class AllDropSoundsPlugin extends Plugin
 		}
 
 		Path specific = soundLibrary.find(name);
-		ValueTier tier = specific == null ? tierFor(itemId, quantity) : null;
+		boolean highlighted = specific == null && IgnoredItems.contains(config.highlightedItems(), name);
+		Path highlightedFile = highlighted ? soundLibrary.find(DropSoundPlan.HIGHLIGHTED_FILE) : null;
+		ValueTier tier = specific == null && highlightedFile == null ? tierFor(itemId, quantity) : null;
 		Path tierFile = tier == null ? null : soundLibrary.find(tier.getFileName());
 		DropSoundPlan plan = DropSoundPlan.choose(
 			specific,
+			highlightedFile,
 			tierFile,
 			config.itemVolume(),
+			config.highlightedVolume(),
 			tier == null ? 0 : volumeFor(tier)
 		);
 		if (plan == null)

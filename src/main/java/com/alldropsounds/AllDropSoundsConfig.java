@@ -13,15 +13,15 @@ public interface AllDropSoundsConfig extends Config
 
 	@ConfigSection(
 		name = "Value sounds",
-		description = "Tier wavs used when an item does not have its own file.",
-		position = 7
+		description = "Tier wavs used when an item does not have its own file and is not highlighted.",
+		position = 9
 	)
 	String valueSounds = "valueSounds";
 
 	@ConfigItem(
 		keyName = "soundsFolder",
 		name = "Sounds folder",
-		description = "Folder of wav files. An item file such as \"Twisted bow.wav\" overrides the tier files Low.wav, Medium.wav, High.wav, Insane.wav, Insane+.wav, and Insane++.wav. Leave blank to use .runelite/all-drop-sounds.",
+		description = "Folder of wav files. An item file such as \"Twisted bow.wav\" overrides highlighted.wav and the tier files Low.wav, Medium.wav, High.wav, Insane.wav, Insane+.wav, and Insane++.wav. Leave blank to use .runelite/all-drop-sounds.",
 		position = 0
 	)
 	default String soundsFolder()
@@ -94,6 +94,29 @@ public interface AllDropSoundsConfig extends Config
 	default String ignoredItems()
 	{
 		return "";
+	}
+
+	@ConfigItem(
+		keyName = "highlightedItems",
+		name = "Highlighted items",
+		description = "Comma-separated item names that play highlighted.wav. An item's own wav file still wins. Ignored items stay silent.",
+		position = 7
+	)
+	default String highlightedItems()
+	{
+		return "";
+	}
+
+	@Range(min = 0, max = 100)
+	@ConfigItem(
+		keyName = "highlightedVolume",
+		name = "Highlighted volume",
+		description = "Volume for highlighted.wav. 0 is silent.",
+		position = 8
+	)
+	default int highlightedVolume()
+	{
+		return 100;
 	}
 
 	@ConfigItem(

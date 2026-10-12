@@ -215,6 +215,19 @@ public class EdgeCasesTest
 		Assert.assertNull(DropSoundPlan.choose(null, low, 100, -1));
 		Assert.assertNull(DropSoundPlan.choose(null, null, 100, 100));
 		Assert.assertEquals(100, DropSoundPlan.choose(null, low, 1, 250).volume);
+
+		Path highlighted = Files.createFile(folder.resolve("highlighted.wav"));
+		DropSoundPlan highlightedPlan = DropSoundPlan.choose(null, highlighted, low, 40, 70, 90);
+		Assert.assertEquals(highlighted, highlightedPlan.file);
+		Assert.assertEquals(70, highlightedPlan.volume);
+
+		DropSoundPlan itemWins = DropSoundPlan.choose(item, highlighted, low, 40, 70, 90);
+		Assert.assertEquals(item, itemWins.file);
+		Assert.assertEquals(40, itemWins.volume);
+
+		Assert.assertNull(DropSoundPlan.choose(null, highlighted, low, 40, 0, 90));
+		Assert.assertEquals(low, DropSoundPlan.choose(null, null, low, 40, 70, 90).file);
+		Assert.assertEquals(100, DropSoundPlan.choose(null, highlighted, null, 1, 250, 90).volume);
 	}
 
 	@Test
