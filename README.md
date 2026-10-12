@@ -8,12 +8,12 @@ Wav files go in `%USERPROFILE%\.runelite\plugin-data\all-drop-sounds`. The plugi
 
 **Master volume** is at the top of the settings and scales every sound. 0 is silent. Sounds also follow the in-game master and sound-effects sliders, and they stop when those sliders are muted.
 
-An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `Clue scroll.wav` also matches `Clue scroll (easy)` and the other clue scrolls. A `%` in a file name is a wildcard.
+An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `skotos.wav` and `tiny tempor.wav` play for those pets. A file is a wildcard only when its name contains `%`, so `Clue scroll%.wav` matches every clue scroll and `Clue scroll.wav` matches only that exact name.
 
 ```
 Twisted bow.wav
 Twisted bow 2.wav
-Clue scroll.wav
+Clue scroll%.wav
 Enhanced crystal weapon seed.wav
 Dharok's helm.wav
 ```
@@ -21,13 +21,16 @@ Dharok's helm.wav
 When an item has no file of its own, the plugin picks the first match:
 
 1. `highlighted.wav`, for names on the highlighted list in Ground Items or any other plugin that stores a highlighted item list
-2. `Unique.wav`, for pets and other untradeable uniques that have no price
+2. `pets.wav`, `jars.wav`, or `champions.wav` for those untradeable uniques, then `Unique.wav` when the category file is missing
 3. The highest price tier the stack still meets
 
-A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default). If `highlighted.wav` or `Unique.wav` is missing, the price tier sound is used. A volume of 0 stays silent. A rarer drop stops a cheaper sound that is already playing.
+A stack is the unit price times the quantity. The price source is Grand Exchange, high alchemy, or the highest of the two (the default). If `highlighted.wav` or the unique category file is missing, the price tier sound is used. An exact item file still wins over its category, so `skotos.wav` plays instead of `pets.wav`. A volume of 0 stays silent. A rarer drop stops a cheaper sound that is already playing.
 
 ```
 highlighted.wav
+pets.wav
+jars.wav
+champions.wav
 Unique.wav
 Low.wav
 Medium.wav

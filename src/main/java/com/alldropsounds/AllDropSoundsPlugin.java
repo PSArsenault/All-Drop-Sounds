@@ -359,9 +359,17 @@ public class AllDropSoundsPlugin extends Plugin
 		Path specific = soundLibrary.find(name);
 		ValueTier valueTier = tierFor(itemId, quantity);
 		boolean highlighted = specific == null && HighlightedLists.matches(highlightedLists, name, quantity);
-		Path highlightedFile = highlighted ? soundLibrary.find(DropSoundPlan.HIGHLIGHTED_FILE) : null;
+		Path highlightedFile = highlighted ? soundLibrary.findExact(DropSoundPlan.HIGHLIGHTED_FILE) : null;
 		boolean unique = specific == null && highlightedFile == null && config.playUniques() && isUnique(itemId, name);
-		Path uniqueFile = unique ? soundLibrary.find(DropSoundPlan.UNIQUE_FILE) : null;
+		Path uniqueFile = null;
+		if (unique)
+		{
+			uniqueFile = soundLibrary.findExact(UniqueItems.categoryStem(name));
+			if (uniqueFile == null)
+			{
+				uniqueFile = soundLibrary.findExact(DropSoundPlan.UNIQUE_FILE);
+			}
+		}
 		ValueTier tier = specific == null && highlightedFile == null && uniqueFile == null ? valueTier : null;
 		Path tierFile = tier == null ? null : soundLibrary.find(tier.getFileName());
 		DropSoundPlan plan = DropSoundPlan.choose(

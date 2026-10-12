@@ -18,8 +18,7 @@ import java.util.regex.Pattern;
  * Maps an item name to a wav file in the sounds folder.
  * The file name, without .wav, is the item name.
  * "Twisted bow 2.wav" takes a turn with "Twisted bow.wav".
- * "Clue scroll.wav" also matches "Clue scroll (easy)".
- * A "%" in the file name is a wildcard.
+ * A file matches an item only by its exact name, unless the file name contains %.
  */
 public final class SoundLibrary
 {
@@ -76,18 +75,23 @@ public final class SoundLibrary
 			return takeTurn(key);
 		}
 
-		String prefix = longestPrefix(key);
-		if (prefix != null)
-		{
-			return takeTurn(prefix);
-		}
-
 		String wildcard = longestWildcard(key);
 		if (wildcard != null)
 		{
 			return takeTurn(wildcard);
 		}
 		return null;
+	}
+
+	public synchronized Path findExact(String name)
+	{
+		refreshIfNeeded();
+		String key = normalize(name);
+		if (key == null || key.indexOf('%') >= 0 || !groups.containsKey(key))
+		{
+			return null;
+		}
+		return takeTurn(key);
 	}
 
 	private Path takeTurn(String key)
@@ -102,26 +106,6 @@ public final class SoundLibrary
 		Path path = files.get(Math.floorMod(index, files.size()));
 		nextVariant.put(key, Integer.valueOf(index + 1));
 		return path;
-	}
-
-	private String longestPrefix(String itemName)
-	{
-		String best = null;
-		for (String base : groups.keySet())
-		{
-			if (base.indexOf('%') >= 0)
-			{
-				continue;
-			}
-			if (itemName.equals(base) || itemName.startsWith(base + " ("))
-			{
-				if (best == null || base.length() > best.length())
-				{
-					best = base;
-				}
-			}
-		}
-		return best;
 	}
 
 	private String longestWildcard(String itemName)

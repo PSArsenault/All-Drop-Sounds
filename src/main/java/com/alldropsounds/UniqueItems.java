@@ -46,6 +46,28 @@ public final class UniqueItems
 	{
 	}
 
+	public static String categoryStem(String name)
+	{
+		String key = normalize(name);
+		if (key == null)
+		{
+			return null;
+		}
+		if (key.startsWith("pet ") || NAMES.contains(key))
+		{
+			return "pets";
+		}
+		if (key.startsWith("jar of "))
+		{
+			return "jars";
+		}
+		if (key.contains("champion"))
+		{
+			return "champions";
+		}
+		return null;
+	}
+
 	public static boolean isUnique(String name, boolean tradeable, long gePrice, long haPrice)
 	{
 		String key = normalize(name);

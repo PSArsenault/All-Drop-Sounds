@@ -112,7 +112,7 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigItem(
 		keyName = "playUniques",
 		name = "Untradeable uniques",
-		description = "Play Unique.wav for pets and other untradeable uniques that have no price.",
+		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
 		position = 8
 	)
 	default boolean playUniques()
@@ -124,7 +124,7 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigItem(
 		keyName = "uniqueVolume",
 		name = "Unique volume",
-		description = "Volume for Unique.wav. 0 is silent.",
+		description = "Volume for category wavs such as pets.wav, jars.wav, champions.wav, and Unique.wav. 0 is silent.",
 		position = 9
 	)
 	default int uniqueVolume()

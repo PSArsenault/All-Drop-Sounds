@@ -16,14 +16,23 @@ public class SoundFeaturesTest
 		Path first = Files.createFile(folder.resolve("Twisted bow.wav"));
 		Path second = Files.createFile(folder.resolve("Twisted bow 2.wav"));
 		Path clues = Files.createFile(folder.resolve("Clue scroll.wav"));
+		Path cluePattern = Files.createFile(folder.resolve("Clue scroll%.wav"));
+		Path skotos = Files.createFile(folder.resolve("skotos.wav"));
+		Path tiny = Files.createFile(folder.resolve("tiny tempor.wav"));
+		Path pets = Files.createFile(folder.resolve("pets.wav"));
 
 		SoundLibrary library = new SoundLibrary();
 		library.setFolder(folder);
 		Assert.assertEquals(first, library.find("Twisted bow"));
 		Assert.assertEquals(second, library.find("Twisted bow"));
 		Assert.assertEquals(first, library.find("Twisted bow"));
-		Assert.assertEquals(clues, library.find("Clue scroll (easy)"));
-		Assert.assertEquals(clues, library.find("Clue scroll (master)"));
+		Assert.assertEquals(cluePattern, library.find("Clue scroll (easy)"));
+		Assert.assertEquals(clues, library.find("Clue scroll"));
+		Assert.assertEquals(cluePattern, library.find("Clue scroll (master)"));
+		Assert.assertEquals(skotos, library.find("Skotos"));
+		Assert.assertEquals(tiny, library.find("Tiny tempor"));
+		Assert.assertEquals(pets, library.findExact("pets"));
+		Assert.assertNull(library.find("Pet chaos elemental"));
 		Assert.assertTrue(SoundLibrary.wildcard("%dragon%", "Dragon claws"));
 		Assert.assertFalse(SoundLibrary.wildcard("%dragon%", "Rune platebody"));
 		Assert.assertNull(library.find("Rune platebody"));
@@ -68,7 +77,12 @@ public class SoundFeaturesTest
 	@Test
 	public void uniquesArePetsJarsAndNamedUntradeables()
 	{
-		Assert.assertTrue(UniqueItems.isUnique("Pet chaos elemental", false, 0, 0));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Skotos"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Tiny tempor"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Pet chaos elemental"));
+		Assert.assertEquals("jars", UniqueItems.categoryStem("Jar of souls"));
+		Assert.assertEquals("champions", UniqueItems.categoryStem("Champion's scroll"));
+		Assert.assertNull(UniqueItems.categoryStem("Some unique token"));
 		Assert.assertTrue(UniqueItems.isUnique("Baby mole", false, 0, 0));
 		Assert.assertTrue(UniqueItems.isUnique("Jar of souls", false, 0, 0));
 		Assert.assertTrue(UniqueItems.isUnique("Champion's scroll", false, 0, 0));
