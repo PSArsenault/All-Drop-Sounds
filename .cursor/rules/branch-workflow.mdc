@@ -1,0 +1,18 @@
+---
+description: Test, commit, push, open a PR into master, retest, and merge
+alwaysApply: true
+---
+
+# Branch workflow
+
+Every code or docs change uses a short-lived branch. `master` is the only pull request target. `main` stays aligned with `master` after the merge.
+
+1. Start from the latest `master`.
+2. Create `feat/short-description`, `fix/short-description`, or `docs/short-description`.
+3. Run `gradle test` with `JAVA_HOME` set to `C:\temp\build-tools\jdk-17\jdk-17.0.20.1+1` and Gradle at `C:\temp\build-tools\gradle-8.10\bin\gradle.bat`.
+4. Commit on that branch. Do not commit `.gradle/` or `build/`.
+5. Push the branch and open a pull request into `master` with `gh`.
+6. Run `gradle test` again.
+7. Merge when those tests pass, delete the branch, and fast-forward `main` to `master`.
+
+Do not commit directly on `master` or `main`. Do not push `master` except through the pull request merge.
