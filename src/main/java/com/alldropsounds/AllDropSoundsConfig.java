@@ -10,6 +10,7 @@ import net.runelite.client.config.Range;
 public interface AllDropSoundsConfig extends Config
 {
 	String GROUP = "alldropsounds";
+	String OPEN_SOUNDS_FOLDER = "Open sounds folder";
 
 	@ConfigSection(
 		name = "Sound volume",
@@ -27,7 +28,7 @@ public interface AllDropSoundsConfig extends Config
 
 	@ConfigItem(
 		keyName = "openSoundsFolder",
-		name = "Open sounds folder",
+		name = OPEN_SOUNDS_FOLDER,
 		description = "Open the folder where wav files are stored. The box clears after the folder opens.",
 		position = 0
 	)
