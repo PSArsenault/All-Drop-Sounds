@@ -47,7 +47,7 @@ One sound plays per item name when:
 - the item appears on the ground as your drop or a group drop
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
 
-**Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. Those drops are recognized even when the game does not mark them as your loot.
+Items you drop from your inventory stay silent. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
 **Ignored items** is a comma-separated list of item names. A listed item never plays a sound, including when a wav file exists for it or the stack is valuable enough for a tier. Matching ignores letter case.
 
@@ -60,7 +60,6 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 - Ground drops
 - Chest loot
 - Only your drops
-- Items you drop
 - Ignored items
 - Highlighted volume
 - Untradeable uniques
