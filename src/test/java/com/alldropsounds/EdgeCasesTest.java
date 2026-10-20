@@ -287,6 +287,8 @@ public class EdgeCasesTest
 		Assert.assertEquals(Integer.valueOf(InventoryID.RAIDS_REWARDS), RewardChests.rewardContainer(InterfaceID.RAIDS_REWARDS));
 		Assert.assertEquals(Integer.valueOf(InventoryID.TOB_CHESTS), RewardChests.rewardContainer(InterfaceID.TOB_CHESTS));
 		Assert.assertEquals(Integer.valueOf(InventoryID.TOA_CHESTS), RewardChests.rewardContainer(InterfaceID.TOA_CHESTS));
+		Assert.assertEquals(Integer.valueOf(InventoryID.TFA_CHESTS), RewardChests.rewardContainer(InterfaceID.TFA_CHESTS));
+		Assert.assertTrue(RewardChests.isRewardChest(InterfaceID.TFA_CHESTS));
 		Assert.assertEquals(Integer.valueOf(InventoryID.PMOON_REWARDINV), RewardChests.rewardContainer(InterfaceID.PMOON_REWARD));
 		Assert.assertEquals(Integer.valueOf(InventoryID.COLOSSEUM_REWARDS), RewardChests.rewardContainer(InterfaceID.COLOSSEUM_REWARD_CHEST_2));
 		Assert.assertNull(RewardChests.rewardContainer(InterfaceID.WILDY_LOOT_CHEST));
