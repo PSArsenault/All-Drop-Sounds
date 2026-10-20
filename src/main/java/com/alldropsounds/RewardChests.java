@@ -38,6 +38,10 @@ public final class RewardChests
 		{
 			return InventoryID.TOA_CHESTS;
 		}
+		if (groupId == InterfaceID.TFA_CHESTS)
+		{
+			return InventoryID.TFA_CHESTS;
+		}
 		if (groupId == InterfaceID.PMOON_REWARD)
 		{
 			return InventoryID.PMOON_REWARDINV;
