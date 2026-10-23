@@ -8,7 +8,7 @@ Wav files go in `%USERPROFILE%\.runelite\plugin-data\all-drop-sounds`. The plugi
 
 **Master volume** is the first control in Sound volume and scales every sound. 0 is silent. Sounds also follow the in-game master and sound-effects sliders, and they stop when those sliders are muted.
 
-An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `skotos.wav` and `tiny tempor.wav` play for those pets. A file is a wildcard only when its name contains `%`, so `Clue scroll%.wav` matches every clue scroll and `Clue scroll.wav` matches only that exact name.
+An item file overrides every category sound. The file name is the item's exact name, and matching ignores letter case. `Twisted bow.wav` and `Twisted bow 2.wav` take turns. `skotos.wav` and `tiny tempor.wav` play for those pets. A file is a wildcard only when its name contains `%`, so `Clue scroll%.wav` matches every clue scroll and `Clue scroll.wav` matches only that exact name. A drop whose name ends with ` (uncharged)` uses the wav for the name without that suffix, so `Obliterator.wav` plays for Obliterator (uncharged). A wav that includes ` (uncharged)` still wins when that file exists.
 
 ```
 Twisted bow.wav
