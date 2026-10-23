@@ -45,6 +45,26 @@ public class SoundLibraryTest
 	}
 
 	@Test
+	public void unchargedDropUsesTheBaseWav() throws Exception
+	{
+		Path folder = Files.createTempDirectory("all-drop-sounds-uncharged");
+		Files.createFile(folder.resolve("Obliterator.wav"));
+		Files.createFile(folder.resolve("Obliterator 2.wav"));
+		Files.createFile(folder.resolve("Voidwaker (uncharged).wav"));
+		Files.createFile(folder.resolve("%uncharged%.wav"));
+
+		SoundLibrary library = new SoundLibrary();
+		library.setFolder(TestFiles.of(folder));
+
+		Assert.assertEquals(TestFiles.of(folder.resolve("Obliterator.wav")), library.find("Obliterator (uncharged)"));
+		Assert.assertEquals(TestFiles.of(folder.resolve("Obliterator 2.wav")), library.find("Obliterator (Uncharged)"));
+		Assert.assertEquals(TestFiles.of(folder.resolve("Obliterator.wav")), library.find("Obliterator"));
+		Assert.assertEquals(TestFiles.of(folder.resolve("Voidwaker (uncharged).wav")), library.find("Voidwaker (uncharged)"));
+		Assert.assertEquals(TestFiles.of(folder.resolve("%uncharged%.wav")), library.find("Something (uncharged)"));
+		Assert.assertNull(library.find("Clue scroll (easy)"));
+	}
+
+	@Test
 	public void volumeExtremes()
 	{
 		Assert.assertEquals(0f, DropSoundPlayer.decibels(100), 0.001f);

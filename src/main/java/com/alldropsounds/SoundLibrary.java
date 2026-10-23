@@ -19,6 +19,7 @@ import net.runelite.client.util.Filepath;
  * The file name, without .wav, is the item name.
  * "Twisted bow 2.wav" takes a turn with "Twisted bow.wav".
  * A file matches an item only by its exact name, unless the file name contains %.
+ * A name ending in " (uncharged)" also matches the wav without that suffix.
  */
 public final class SoundLibrary
 {
@@ -75,12 +76,39 @@ public final class SoundLibrary
 			return takeTurn(key);
 		}
 
+		String base = withoutUncharged(key);
+		if (!base.equals(key) && groups.containsKey(base))
+		{
+			return takeTurn(base);
+		}
+
 		String wildcard = longestWildcard(key);
+		if (wildcard == null && !base.equals(key))
+		{
+			wildcard = longestWildcard(base);
+		}
 		if (wildcard != null)
 		{
 			return takeTurn(wildcard);
 		}
 		return null;
+	}
+
+	/**
+	 * Charged gear drops as "Name (uncharged)". That suffix is not part of the wav name.
+	 */
+	static String withoutUncharged(String key)
+	{
+		final String suffix = " (uncharged)";
+		if (key != null && key.endsWith(suffix) && key.length() > suffix.length())
+		{
+			String base = key.substring(0, key.length() - suffix.length()).trim();
+			if (!base.isEmpty())
+			{
+				return base;
+			}
+		}
+		return key;
 	}
 
 	public synchronized Filepath findExact(String name)
