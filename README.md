@@ -32,6 +32,7 @@ pets.wav
 jars.wav
 champions.wav
 Unique.wav
+purple.wav
 Low.wav
 Medium.wav
 High.wav
@@ -49,6 +50,8 @@ One sound plays per item name when:
 
 **Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
+**Purple notification** plays `purple.wav` when a purple chest appears in the reward room, before its loot is revealed. It covers Chambers of Xeric, Theatre of Blood, Tombs of Amascut, and The Fractured Archive. Opening the chest still plays that chest's item sound. Master volume scales `purple.wav`. The notification stays quiet when `purple.wav` is missing.
+
 **Ignored items** is a comma-separated list of item names. A listed item never plays a sound, including when a wav file exists for it or the stack is valuable enough for a tier. Matching ignores letter case.
 
 Ground sounds stay quiet until the scene has finished loading, so items already on the ground at login stay silent.
@@ -61,6 +64,7 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 - Items you drop
 - Ignored items
 - Untradeable uniques
+- Purple notification
 
 Sound volume:
 

@@ -91,6 +91,17 @@ public interface AllDropSoundsConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+		keyName = "purpleNotification",
+		name = "Purple notification",
+		description = "Play purple.wav when a purple chest appears in Chambers of Xeric, Theatre of Blood, Tombs of Amascut, or The Fractured Archive, before the loot is revealed. Master volume scales this sound.",
+		position = 7
+	)
+	default boolean purpleNotification()
+	{
+		return true;
+	}
+
 	@Range(min = 0, max = 100)
 	@ConfigItem(
 		keyName = "masterVolume",

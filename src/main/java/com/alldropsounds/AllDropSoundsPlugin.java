@@ -12,23 +12,37 @@ import java.util.Set;
 import javax.inject.Inject;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
+import net.runelite.api.NPC;
+import net.runelite.api.ObjectComposition;
+import net.runelite.api.Scene;
+import net.runelite.api.Tile;
 import net.runelite.api.TileItem;
+import net.runelite.api.TileObject;
+import net.runelite.api.WorldView;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.DecorativeObjectSpawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.GroundObjectSpawned;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.events.WallObjectSpawned;
 import net.runelite.api.events.WidgetClosed;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.VarPlayerID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -78,8 +92,11 @@ public class AllDropSoundsPlugin extends Plugin
 	private final Map<Integer, Integer> droppedAtTick = new HashMap<>();
 	private final Set<Integer> playedRewardGroups = new HashSet<>();
 	private final Set<String> playedThisTick = new HashSet<>();
+	private final Set<String> announcedPurple = new HashSet<>();
 
 	private int blockGroundSoundsUntilTick = Integer.MAX_VALUE;
+	private boolean purplePlayedThisTick;
+	private boolean toaSarcophagusLoaded;
 	private int pendingRewardGroup = -1;
 	private int pendingRewardTicks;
 	private List<String> highlightedLists = Collections.emptyList();
@@ -94,6 +111,9 @@ public class AllDropSoundsPlugin extends Plugin
 		droppedAtTick.clear();
 		playedRewardGroups.clear();
 		playedThisTick.clear();
+		announcedPurple.clear();
+		purplePlayedThisTick = false;
+		toaSarcophagusLoaded = false;
 		pendingRewardGroup = -1;
 		blockGroundSoundsUntilTick = Integer.MAX_VALUE;
 
@@ -104,6 +124,7 @@ public class AllDropSoundsPlugin extends Plugin
 			{
 				blockGroundSoundsUntilTick = client.getTickCount();
 				announceFolder(folder);
+				scanPurpleChests();
 			}
 			log.info("All Drop Sounds folder: {} ({} wav files)", folder, soundLibrary.size());
 		});
@@ -116,6 +137,9 @@ public class AllDropSoundsPlugin extends Plugin
 		droppedAtTick.clear();
 		playedRewardGroups.clear();
 		playedThisTick.clear();
+		announcedPurple.clear();
+		purplePlayedThisTick = false;
+		toaSarcophagusLoaded = false;
 		pendingRewardGroup = -1;
 	}
 
@@ -135,6 +159,9 @@ public class AllDropSoundsPlugin extends Plugin
 			droppedAtTick.clear();
 			playedThisTick.clear();
 			playedRewardGroups.clear();
+			announcedPurple.clear();
+			purplePlayedThisTick = false;
+			toaSarcophagusLoaded = false;
 			pendingRewardGroup = -1;
 			return;
 		}
@@ -142,7 +169,11 @@ public class AllDropSoundsPlugin extends Plugin
 		if (state == GameState.LOGGED_IN)
 		{
 			blockGroundSoundsUntilTick = client.getTickCount() + 1;
-			clientThread.invokeLater(this::resetInventoryWatch);
+			clientThread.invokeLater(() ->
+			{
+				resetInventoryWatch();
+				scanPurpleChests();
+			});
 		}
 	}
 
@@ -150,12 +181,19 @@ public class AllDropSoundsPlugin extends Plugin
 	public void onConfigChanged(ConfigChanged event)
 	{
 		refreshHighlightedLists();
+		if (AllDropSoundsConfig.GROUP.equals(event.getGroup())
+			&& "purpleNotification".equals(event.getKey())
+			&& config.purpleNotification())
+		{
+			clientThread.invokeLater(this::scanPurpleChests);
+		}
 	}
 
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
 		playedThisTick.clear();
+		purplePlayedThisTick = false;
 		chestLootWatch.onGameTick();
 
 		int tick = client.getTickCount();
@@ -206,6 +244,48 @@ public class AllDropSoundsPlugin extends Plugin
 			return;
 		}
 		droppedAtTick.put(canonical(event.getItemId()), client.getTickCount());
+	}
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event)
+	{
+		noteObject(event.getGameObject());
+	}
+
+	@Subscribe
+	public void onGroundObjectSpawned(GroundObjectSpawned event)
+	{
+		noteObject(event.getGroundObject());
+	}
+
+	@Subscribe
+	public void onWallObjectSpawned(WallObjectSpawned event)
+	{
+		noteObject(event.getWallObject());
+	}
+
+	@Subscribe
+	public void onDecorativeObjectSpawned(DecorativeObjectSpawned event)
+	{
+		noteObject(event.getDecorativeObject());
+	}
+
+	@Subscribe
+	public void onNpcSpawned(NpcSpawned event)
+	{
+		noteNpc(event.getNpc());
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if (!PurpleChests.isToaSarcophagusVarbit(event.getVarbitId())
+			|| !PurpleChests.toaSarcophagusIsPurple(event.getValue())
+			|| !toaSarcophagusLoaded)
+		{
+			return;
+		}
+		notePurple(PurpleChests.TOA_KEY);
 	}
 
 	@Subscribe
@@ -563,6 +643,155 @@ public class AllDropSoundsPlugin extends Plugin
 			counts.merge(item.getId(), item.getQuantity(), InventoryDiff::addQuantity);
 		}
 		return counts;
+	}
+
+	private void scanPurpleChests()
+	{
+		if (!config.purpleNotification() || client.getGameState() != GameState.LOGGED_IN)
+		{
+			return;
+		}
+
+		WorldView worldView = client.getTopLevelWorldView();
+		Scene scene = worldView == null ? null : worldView.getScene();
+		Tile[][][] tiles = scene == null ? null : scene.getTiles();
+		if (tiles != null)
+		{
+			for (Tile[][] plane : tiles)
+			{
+				if (plane == null)
+				{
+					continue;
+				}
+				for (Tile[] row : plane)
+				{
+					if (row == null)
+					{
+						continue;
+					}
+					for (Tile tile : row)
+					{
+						if (tile == null)
+						{
+							continue;
+						}
+						GameObject[] gameObjects = tile.getGameObjects();
+						if (gameObjects != null)
+						{
+							for (GameObject gameObject : gameObjects)
+							{
+								noteObject(gameObject);
+							}
+						}
+						noteObject(tile.getGroundObject());
+						noteObject(tile.getWallObject());
+						noteObject(tile.getDecorativeObject());
+					}
+				}
+			}
+		}
+
+		if (worldView != null && worldView.npcs() != null)
+		{
+			for (NPC npc : worldView.npcs())
+			{
+				noteNpc(npc);
+			}
+		}
+
+		if (toaSarcophagusLoaded && PurpleChests.toaSarcophagusIsPurple(client.getVarbitValue(VarbitID.TOA_VAULT_SARCOPHAGUS)))
+		{
+			notePurple(PurpleChests.TOA_KEY);
+		}
+	}
+
+	private void noteObject(TileObject object)
+	{
+		if (object == null)
+		{
+			return;
+		}
+
+		int rawId = object.getId();
+		int resolvedId = resolvedObjectId(rawId);
+		boolean sarcophagus = PurpleChests.isToaSarcophagus(rawId) || PurpleChests.isToaSarcophagus(resolvedId);
+		if (sarcophagus)
+		{
+			toaSarcophagusLoaded = true;
+		}
+
+		WorldPoint point = object.getWorldLocation();
+		if (point != null && PurpleChests.isPurpleObject(resolvedId))
+		{
+			notePurple(PurpleChests.objectKey(resolvedId, point.getX(), point.getY(), point.getPlane()));
+			return;
+		}
+
+		if (sarcophagus && PurpleChests.toaSarcophagusIsPurple(client.getVarbitValue(VarbitID.TOA_VAULT_SARCOPHAGUS)))
+		{
+			notePurple(PurpleChests.TOA_KEY);
+		}
+	}
+
+	private void noteNpc(NPC npc)
+	{
+		if (npc == null || !PurpleChests.isPurpleNpc(npc.getId()))
+		{
+			return;
+		}
+
+		WorldPoint point = npc.getWorldLocation();
+		if (point == null)
+		{
+			return;
+		}
+		notePurple(npc.getId() + ":" + point.getX() + ":" + point.getY() + ":" + point.getPlane());
+	}
+
+	private int resolvedObjectId(int objectId)
+	{
+		try
+		{
+			ObjectComposition composition = client.getObjectDefinition(objectId);
+			ObjectComposition impostor = composition == null ? null : composition.getImpostor();
+			if (impostor != null)
+			{
+				return impostor.getId();
+			}
+		}
+		catch (Exception ex)
+		{
+			log.debug("Could not resolve object {}", objectId, ex);
+		}
+		return objectId;
+	}
+
+	private void notePurple(String key)
+	{
+		if (!config.purpleNotification() || key == null || announcedPurple.contains(key))
+		{
+			return;
+		}
+
+		announcedPurple.add(key);
+		if (purplePlayedThisTick)
+		{
+			return;
+		}
+
+		Filepath wav = soundLibrary.findExact(PurpleChests.FILE);
+		int volume = wav == null ? 0 : GameAudio.applyOutput(
+			DropSoundPlan.applyMaster(100, config.masterVolume()),
+			gameVolumePercent()
+		);
+		if (wav == null || volume <= 0)
+		{
+			announcedPurple.remove(key);
+			return;
+		}
+
+		purplePlayedThisTick = true;
+		player.play(wav, volume);
 	}
 
 	private void announceFolder(Filepath folder)
