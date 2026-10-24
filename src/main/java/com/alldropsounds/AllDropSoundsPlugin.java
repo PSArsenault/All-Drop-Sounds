@@ -750,6 +750,11 @@ public class AllDropSoundsPlugin extends Plugin
 
 	private int resolvedObjectId(int objectId)
 	{
+		if (!PurpleChests.isPurpleParent(objectId))
+		{
+			return objectId;
+		}
+
 		try
 		{
 			ObjectComposition composition = client.getObjectDefinition(objectId);
@@ -759,9 +764,9 @@ public class AllDropSoundsPlugin extends Plugin
 				return impostor.getId();
 			}
 		}
-		catch (Exception ex)
+		catch (Exception ignored)
 		{
-			log.debug("Could not resolve object {}", objectId, ex);
+			log.debug("Could not resolve object {}", objectId);
 		}
 		return objectId;
 	}

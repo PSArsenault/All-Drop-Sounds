@@ -15,6 +15,8 @@ public final class PurpleChests
 
 	/** ObjectID.RAIDS_REWARD_LOOTBEAM_SPECIAL. The white, kit, and dust beams are separate objects. */
 	public static final int COX_PURPLE_BEAM = ObjectID.RAIDS_REWARD_LOOTBEAM_SPECIAL;
+	/** ObjectID.RAIDS_REWARD_LOOTBEAM. Multiloc parent of the white, purple, kit, and dust beams. */
+	public static final int COX_LOOTBEAM_PARENT = ObjectID.RAIDS_REWARD_LOOTBEAM;
 	/** ObjectID1.TOB_TREASUREROOM_CHEST_MINE_RARE */
 	public static final int TOB_PURPLE_CHEST_MINE = 32993;
 	/** ObjectID1.TOB_TREASUREROOM_CHEST_NOTMINE_RARE */
@@ -38,6 +40,17 @@ public final class PurpleChests
 			|| objectId == TOB_PURPLE_CHEST_MINE
 			|| objectId == TOB_PURPLE_CHEST_OTHER
 			|| objectId == TOA_PURPLE_SARCOPHAGUS;
+	}
+
+	/**
+	 * Multiloc parents that can transform into a purple chest.
+	 * Direct purple ids are already the rare object, so they do not need an impostor lookup.
+	 */
+	public static boolean isPurpleParent(int objectId)
+	{
+		return objectId == COX_LOOTBEAM_PARENT
+			|| objectId == TOA_SARCOPHAGUS_PARENT
+			|| objectId == TOA_SARCOPHAGUS_BARRIER;
 	}
 
 	public static boolean isToaSarcophagus(int objectId)
