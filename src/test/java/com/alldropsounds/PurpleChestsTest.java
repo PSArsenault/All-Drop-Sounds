@@ -32,6 +32,28 @@ public class PurpleChestsTest
 	}
 
 	@Test
+	public void purpleParentsAreTheMultilocObjects()
+	{
+		Assert.assertEquals(ObjectID.RAIDS_REWARD_LOOTBEAM, PurpleChests.COX_LOOTBEAM_PARENT);
+		Assert.assertTrue(PurpleChests.isPurpleParent(PurpleChests.COX_LOOTBEAM_PARENT));
+		Assert.assertTrue(PurpleChests.isPurpleParent(PurpleChests.TOA_SARCOPHAGUS_PARENT));
+		Assert.assertTrue(PurpleChests.isPurpleParent(PurpleChests.TOA_SARCOPHAGUS_BARRIER));
+		Assert.assertFalse(PurpleChests.isPurpleObject(PurpleChests.COX_LOOTBEAM_PARENT));
+		Assert.assertFalse(PurpleChests.isPurpleObject(PurpleChests.TOA_SARCOPHAGUS_PARENT));
+		Assert.assertFalse(PurpleChests.isPurpleObject(PurpleChests.TOA_SARCOPHAGUS_BARRIER));
+
+		Assert.assertFalse(PurpleChests.isPurpleParent(PurpleChests.COX_PURPLE_BEAM));
+		Assert.assertFalse(PurpleChests.isPurpleParent(ObjectID.RAIDS_REWARD_LOOTBEAM_BASIC));
+		Assert.assertFalse(PurpleChests.isPurpleParent(37976));
+		Assert.assertFalse(PurpleChests.isPurpleParent(37977));
+		Assert.assertFalse(PurpleChests.isPurpleParent(PurpleChests.TOB_PURPLE_CHEST_MINE));
+		Assert.assertFalse(PurpleChests.isPurpleParent(PurpleChests.TOB_PURPLE_CHEST_OTHER));
+		Assert.assertFalse(PurpleChests.isPurpleParent(PurpleChests.TOA_PURPLE_SARCOPHAGUS));
+		Assert.assertFalse(PurpleChests.isPurpleParent(PurpleChests.TOA_WHITE_SARCOPHAGUS));
+		Assert.assertFalse(PurpleChests.isPurpleParent(ObjectID.RAIDS_REWARD_CHEST));
+	}
+
+	@Test
 	public void fracturedArchivePurpleIsTheClosedUniqueChest()
 	{
 		Assert.assertTrue(PurpleChests.isPurpleNpc(NpcID.TFA_UNIQUE_CHEST_VAULT_CLOSED));
