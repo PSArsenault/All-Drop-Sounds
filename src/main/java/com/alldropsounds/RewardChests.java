@@ -20,6 +20,15 @@ public final class RewardChests
 		return rewardContainer(groupId) != null || groupId == InterfaceID.WILDY_LOOT_CHEST;
 	}
 
+	/**
+	 * The sarcophagus and the purple Archive chest have a reveal before the loot interface.
+	 * Chambers of Xeric, Theatre of Blood, and the smaller Archive chests do not.
+	 */
+	public static boolean suspenseLoot(int groupId)
+	{
+		return groupId == InterfaceID.TOA_CHESTS || groupId == InterfaceID.TFA_CHESTS;
+	}
+
 	public static Integer rewardContainer(int groupId)
 	{
 		if (groupId == InterfaceID.BARROWS_REWARD)
