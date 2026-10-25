@@ -14,14 +14,14 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigSection(
 		name = "Sound volume",
 		description = "Volume for each kind of drop sound. 0 is silent. Master volume scales every sound.",
-		position = 7
+		position = 10
 	)
 	String soundVolume = "soundVolume";
 
 	@ConfigSection(
 		name = "Value sounds",
 		description = "Start prices for tier wavs used when an item has no file of its own, is not highlighted, and is not an untradeable unique.",
-		position = 8
+		position = 11
 	)
 	String valueSounds = "valueSounds";
 
@@ -48,10 +48,21 @@ public interface AllDropSoundsConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "rewardPools",
+		name = "Reward pools",
+		description = "Play when a reward pool puts loot in your inventory. This includes searching and big-searching Tempoross, Guardians of the Rift, and the Wintertodt reward cart.",
+		position = 3
+	)
+	default boolean rewardPools()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "lootReveal",
 		name = "Loot reveal",
 		description = "Default plays when the item appears. This is the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. Chambers of Xeric, Theatre of Blood, and the smaller Archive chests play when their loot interface opens.",
-		position = 3
+		position = 4
 	)
 	default LootReveal lootReveal()
 	{
@@ -62,7 +73,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "onlyYourDrops",
 		name = "Only your drops",
 		description = "Ground sounds play for your drops and group drops.",
-		position = 4
+		position = 5
 	)
 	default boolean onlyYourDrops()
 	{
@@ -73,7 +84,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playSelfDrops",
 		name = "Items you drop",
 		description = "Play a sound when you drop an item from your inventory onto the ground.",
-		position = 5
+		position = 6
 	)
 	default boolean playSelfDrops()
 	{
@@ -84,7 +95,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "ignoredItems",
 		name = "Ignored items",
 		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
-		position = 6
+		position = 7
 	)
 	default String ignoredItems()
 	{
@@ -95,7 +106,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playUniques",
 		name = "Untradeable uniques",
 		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
-		position = 7
+		position = 8
 	)
 	default boolean playUniques()
 	{
@@ -106,7 +117,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "purpleNotification",
 		name = "Purple notification",
 		description = "Play purple.wav when a purple chest appears in Chambers of Xeric, Theatre of Blood, Tombs of Amascut, or The Fractured Archive, before the loot is revealed. Master volume scales this sound.",
-		position = 8
+		position = 9
 	)
 	default boolean purpleNotification()
 	{
