@@ -10,12 +10,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
+import net.runelite.api.Actor;
+import net.runelite.api.ActorSpotAnim;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
+import net.runelite.api.IterableHashTable;
 import net.runelite.api.NPC;
 import net.runelite.api.ObjectComposition;
 import net.runelite.api.Scene;
@@ -29,6 +32,8 @@ import net.runelite.api.events.DecorativeObjectSpawned;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.GraphicChanged;
+import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.api.events.GroundObjectSpawned;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.ItemSpawned;
@@ -93,6 +98,7 @@ public class AllDropSoundsPlugin extends Plugin
 	private final Set<Integer> playedRewardGroups = new HashSet<>();
 	private final Set<String> playedThisTick = new HashSet<>();
 	private final Set<String> announcedPurple = new HashSet<>();
+	private final Set<Integer> tfaRevealPlayed = new HashSet<>();
 
 	private int blockGroundSoundsUntilTick = Integer.MAX_VALUE;
 	private boolean purplePlayedThisTick;
@@ -112,6 +118,7 @@ public class AllDropSoundsPlugin extends Plugin
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		announcedPurple.clear();
+		tfaRevealPlayed.clear();
 		purplePlayedThisTick = false;
 		toaSarcophagusLoaded = false;
 		pendingRewardGroup = -1;
@@ -138,6 +145,7 @@ public class AllDropSoundsPlugin extends Plugin
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		announcedPurple.clear();
+		tfaRevealPlayed.clear();
 		purplePlayedThisTick = false;
 		toaSarcophagusLoaded = false;
 		pendingRewardGroup = -1;
@@ -160,6 +168,7 @@ public class AllDropSoundsPlugin extends Plugin
 			playedThisTick.clear();
 			playedRewardGroups.clear();
 			announcedPurple.clear();
+			tfaRevealPlayed.clear();
 			purplePlayedThisTick = false;
 			toaSarcophagusLoaded = false;
 			pendingRewardGroup = -1;
@@ -364,6 +373,10 @@ public class AllDropSoundsPlugin extends Plugin
 	{
 		int groupId = event.getGroupId();
 		playedRewardGroups.remove(groupId);
+		if (groupId == InterfaceID.TFA_CHESTS)
+		{
+			tfaRevealPlayed.clear();
+		}
 		if (pendingRewardGroup == groupId)
 		{
 			pendingRewardGroup = -1;
@@ -428,8 +441,62 @@ public class AllDropSoundsPlugin extends Plugin
 		return found;
 	}
 
+	@Subscribe
+	public void onGraphicsObjectCreated(GraphicsObjectCreated event)
+	{
+		noteTfaReveal(event.getGraphicsObject().getId());
+	}
+
+	@Subscribe
+	public void onGraphicChanged(GraphicChanged event)
+	{
+		Actor actor = event.getActor();
+		if (actor == null)
+		{
+			return;
+		}
+		noteTfaReveal(actor.getGraphic());
+		IterableHashTable<ActorSpotAnim> spotAnims = actor.getSpotAnims();
+		if (spotAnims == null)
+		{
+			return;
+		}
+		for (ActorSpotAnim spotAnim : spotAnims)
+		{
+			if (spotAnim != null)
+			{
+				noteTfaReveal(spotAnim.getId());
+			}
+		}
+	}
+
+	private void noteTfaReveal(int spotanimId)
+	{
+		int itemId = TfaLootReveal.itemId(spotanimId);
+		if (itemId == 0 || !config.playChestLoot())
+		{
+			return;
+		}
+		int id = canonical(itemId);
+		if (!tfaRevealPlayed.add(id))
+		{
+			return;
+		}
+		playItem(id, 1, false);
+	}
+
 	private void playItem(int itemId, int quantity)
 	{
+		playItem(itemId, quantity, true);
+	}
+
+	private void playItem(int itemId, int quantity, boolean skipRevealed)
+	{
+		if (skipRevealed && tfaRevealPlayed.contains(canonical(itemId)))
+		{
+			return;
+		}
+
 		String name = itemName(itemId);
 		if (name == null)
 		{

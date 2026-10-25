@@ -48,9 +48,11 @@ One sound plays per item name when:
 - the item appears on the ground as your drop or a group drop
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, The Fractured Archive, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
 
+On The Fractured Archive unique chest, the item sound plays when that item appears on the chest, after the glowing light. The glow itself is silent. Opening the chest to take the item does not play that sound again.
+
 **Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
-**Purple notification** plays `purple.wav` when a purple chest appears in the reward room, before its loot is revealed. It covers Chambers of Xeric, Theatre of Blood, Tombs of Amascut, and The Fractured Archive. Opening the chest still plays that chest's item sound. Master volume scales `purple.wav`. The notification stays quiet when `purple.wav` is missing.
+**Purple notification** plays `purple.wav` when a purple chest appears in the reward room, before its loot is revealed. It covers Chambers of Xeric, Theatre of Blood, Tombs of Amascut, and The Fractured Archive. That chest's item sound still plays for the loot. Master volume scales `purple.wav`. The notification stays quiet when `purple.wav` is missing.
 
 **Ignored items** is a comma-separated list of item names. A listed item never plays a sound, including when a wav file exists for it or the stack is valuable enough for a tier. Matching ignores letter case.
 
