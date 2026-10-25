@@ -50,7 +50,7 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigItem(
 		keyName = "lootReveal",
 		name = "Loot reveal",
-		description = "Tombs of Amascut and The Fractured Archive. Play the item sound when that item appears in the reveal, when the loot interface opens, or both. Other chests use the loot interface.",
+		description = "Default plays when the item appears. This is the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. Chambers of Xeric, Theatre of Blood, and the smaller Archive chests play when their loot interface opens.",
 		position = 3
 	)
 	default LootReveal lootReveal()

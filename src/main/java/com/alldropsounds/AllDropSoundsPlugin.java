@@ -416,7 +416,7 @@ public class AllDropSoundsPlugin extends Plugin
 		else
 		{
 			Integer containerId = rewardContainer(groupId);
-			found = containerId != null && playContainer(containerId);
+			found = containerId != null && playContainer(containerId, RewardChests.suspenseLoot(groupId));
 		}
 
 		if (found)
@@ -430,6 +430,11 @@ public class AllDropSoundsPlugin extends Plugin
 	}
 
 	private boolean playContainer(int containerId)
+	{
+		return playContainer(containerId, false);
+	}
+
+	private boolean playContainer(int containerId, boolean suspenseChest)
 	{
 		ItemContainer container = client.getItemContainer(containerId);
 		if (container == null)
@@ -451,7 +456,7 @@ public class AllDropSoundsPlugin extends Plugin
 				continue;
 			}
 			found = true;
-			playItem(item.getId(), item.getQuantity());
+			playItem(item.getId(), item.getQuantity(), suspenseChest);
 		}
 		return found;
 	}
@@ -548,12 +553,12 @@ public class AllDropSoundsPlugin extends Plugin
 
 	private void playItem(int itemId, int quantity)
 	{
-		playItem(itemId, quantity, true);
+		playItem(itemId, quantity, false);
 	}
 
-	private void playItem(int itemId, int quantity, boolean skipRevealed)
+	private void playItem(int itemId, int quantity, boolean suspenseChest)
 	{
-		if (skipRevealed
+		if (suspenseChest
 			&& !config.lootReveal().playsOnInterface()
 			&& revealedLoot.contains(canonical(itemId)))
 		{
