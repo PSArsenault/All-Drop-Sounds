@@ -47,10 +47,13 @@ One sound plays per item name when:
 
 - the item appears on the ground as your drop or a group drop
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, The Fractured Archive, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
+- the item is received from a reward pool, including searching and big-searching Tempoross, Guardians of the Rift, and the Wintertodt reward cart
 
 **Loot reveal** is for the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. The default is When the item appears: the sound plays after the glowing light is gone and that item is visible, and opening the chest to take it stays quiet. When the loot interface opens plays when that window opens. Both plays at each of those moments. The glow itself is silent.
 
 Chambers of Xeric, Theatre of Blood, and The Fractured Archive's smaller chests play when their loot interface opens.
+
+**Reward pools** plays when a pool puts loot in your inventory. Search and big-search use the same sound. It is on by default.
 
 **Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
@@ -64,6 +67,7 @@ Ground sounds stay quiet until the scene has finished loading, so items already 
 
 - Ground drops
 - Chest loot
+- Reward pools
 - Loot reveal
 - Only your drops
 - Items you drop

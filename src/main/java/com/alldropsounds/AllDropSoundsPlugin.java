@@ -314,17 +314,16 @@ public class AllDropSoundsPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		if (!config.playChestLoot())
-		{
-			return;
-		}
-
 		ChatMessageType type = event.getType();
 		if (type != ChatMessageType.GAMEMESSAGE && type != ChatMessageType.SPAM && type != ChatMessageType.MESBOX)
 		{
 			return;
 		}
-		if (!ChestLootMessages.isChestLoot(event.getMessage()))
+
+		String message = event.getMessage();
+		boolean chest = config.playChestLoot() && ChestLootMessages.isChestLoot(message);
+		boolean pool = config.rewardPools() && RewardPoolMessages.isRewardPool(message);
+		if (!chest && !pool)
 		{
 			return;
 		}
@@ -349,7 +348,7 @@ public class AllDropSoundsPlugin extends Plugin
 		{
 			droppedAtTick.put(canonical(itemId), client.getTickCount());
 		}
-		if (!config.playChestLoot())
+		if (!config.playChestLoot() && !config.rewardPools())
 		{
 			return;
 		}
