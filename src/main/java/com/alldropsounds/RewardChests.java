@@ -21,8 +21,8 @@ public final class RewardChests
 	}
 
 	/**
-	 * The sarcophagus and the purple Archive chest have a reveal before the loot interface.
-	 * Chambers of Xeric, Theatre of Blood, and the smaller Archive chests do not.
+	 * The sarcophagus and the purple Archive chest have a reveal before their loot interface.
+	 * Chambers of Xeric, Theatre of Blood, and the smaller Archive chests play when that interface opens.
 	 */
 	public static boolean suspenseLoot(int groupId)
 	{

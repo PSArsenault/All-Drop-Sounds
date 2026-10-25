@@ -50,7 +50,7 @@ One sound plays per item name when:
 
 **Loot reveal** is for the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. The default is When the item appears: the sound plays after the glowing light is gone and that item is visible, and opening the chest to take it stays quiet. When the loot interface opens plays when that window opens. Both plays at each of those moments. The glow itself is silent.
 
-Chambers of Xeric, Theatre of Blood, and The Fractured Archive's smaller chests play when their loot interface opens. Items from those smaller chests that appear on the ground follow the ground drop rules.
+Chambers of Xeric, Theatre of Blood, and The Fractured Archive's smaller chests play when their loot interface opens.
 
 **Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
