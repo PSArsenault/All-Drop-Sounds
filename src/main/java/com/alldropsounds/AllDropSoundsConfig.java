@@ -48,10 +48,21 @@ public interface AllDropSoundsConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "lootReveal",
+		name = "Loot reveal",
+		description = "Tombs of Amascut and The Fractured Archive. Play the item sound when that item appears in the reveal, when the loot interface opens, or both. Other chests use the loot interface.",
+		position = 3
+	)
+	default LootReveal lootReveal()
+	{
+		return LootReveal.REVEAL;
+	}
+
+	@ConfigItem(
 		keyName = "onlyYourDrops",
 		name = "Only your drops",
 		description = "Ground sounds play for your drops and group drops.",
-		position = 3
+		position = 4
 	)
 	default boolean onlyYourDrops()
 	{
@@ -62,7 +73,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playSelfDrops",
 		name = "Items you drop",
 		description = "Play a sound when you drop an item from your inventory onto the ground.",
-		position = 4
+		position = 5
 	)
 	default boolean playSelfDrops()
 	{
@@ -73,7 +84,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "ignoredItems",
 		name = "Ignored items",
 		description = "Comma-separated item names that never play a sound, even when a wav file exists or the stack meets a price tier.",
-		position = 5
+		position = 6
 	)
 	default String ignoredItems()
 	{
@@ -84,7 +95,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "playUniques",
 		name = "Untradeable uniques",
 		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
-		position = 6
+		position = 7
 	)
 	default boolean playUniques()
 	{
@@ -95,7 +106,7 @@ public interface AllDropSoundsConfig extends Config
 		keyName = "purpleNotification",
 		name = "Purple notification",
 		description = "Play purple.wav when a purple chest appears in Chambers of Xeric, Theatre of Blood, Tombs of Amascut, or The Fractured Archive, before the loot is revealed. Master volume scales this sound.",
-		position = 7
+		position = 8
 	)
 	default boolean purpleNotification()
 	{

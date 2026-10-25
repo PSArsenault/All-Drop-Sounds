@@ -98,13 +98,14 @@ public class AllDropSoundsPlugin extends Plugin
 	private final Set<Integer> playedRewardGroups = new HashSet<>();
 	private final Set<String> playedThisTick = new HashSet<>();
 	private final Set<String> announcedPurple = new HashSet<>();
-	private final Set<Integer> tfaRevealPlayed = new HashSet<>();
+	private final Set<Integer> revealedLoot = new HashSet<>();
 
 	private int blockGroundSoundsUntilTick = Integer.MAX_VALUE;
 	private boolean purplePlayedThisTick;
 	private boolean toaSarcophagusLoaded;
 	private int pendingRewardGroup = -1;
 	private int pendingRewardTicks;
+	private int toaRevealTicks;
 	private List<String> highlightedLists = Collections.emptyList();
 
 	@Override
@@ -118,7 +119,8 @@ public class AllDropSoundsPlugin extends Plugin
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		announcedPurple.clear();
-		tfaRevealPlayed.clear();
+		revealedLoot.clear();
+		toaRevealTicks = 0;
 		purplePlayedThisTick = false;
 		toaSarcophagusLoaded = false;
 		pendingRewardGroup = -1;
@@ -145,7 +147,8 @@ public class AllDropSoundsPlugin extends Plugin
 		playedRewardGroups.clear();
 		playedThisTick.clear();
 		announcedPurple.clear();
-		tfaRevealPlayed.clear();
+		revealedLoot.clear();
+		toaRevealTicks = 0;
 		purplePlayedThisTick = false;
 		toaSarcophagusLoaded = false;
 		pendingRewardGroup = -1;
@@ -168,7 +171,8 @@ public class AllDropSoundsPlugin extends Plugin
 			playedThisTick.clear();
 			playedRewardGroups.clear();
 			announcedPurple.clear();
-			tfaRevealPlayed.clear();
+			revealedLoot.clear();
+			toaRevealTicks = 0;
 			purplePlayedThisTick = false;
 			toaSarcophagusLoaded = false;
 			pendingRewardGroup = -1;
@@ -217,6 +221,14 @@ public class AllDropSoundsPlugin extends Plugin
 				pendingRewardGroup = -1;
 			}
 		}
+		if (toaRevealTicks > 0)
+		{
+			toaRevealTicks--;
+			if (playToaReveal())
+			{
+				toaRevealTicks = 0;
+			}
+		}
 	}
 
 	@Subscribe
@@ -258,7 +270,9 @@ public class AllDropSoundsPlugin extends Plugin
 	@Subscribe
 	public void onGameObjectSpawned(GameObjectSpawned event)
 	{
-		noteObject(event.getGameObject());
+		GameObject gameObject = event.getGameObject();
+		noteObject(gameObject);
+		noteToaLootObject(gameObject);
 	}
 
 	@Subscribe
@@ -373,9 +387,10 @@ public class AllDropSoundsPlugin extends Plugin
 	{
 		int groupId = event.getGroupId();
 		playedRewardGroups.remove(groupId);
-		if (groupId == InterfaceID.TFA_CHESTS)
+		if (groupId == InterfaceID.TFA_CHESTS || groupId == InterfaceID.TOA_CHESTS)
 		{
-			tfaRevealPlayed.clear();
+			revealedLoot.clear();
+			toaRevealTicks = 0;
 		}
 		if (pendingRewardGroup == groupId)
 		{
@@ -470,19 +485,65 @@ public class AllDropSoundsPlugin extends Plugin
 		}
 	}
 
+	private void noteToaLootObject(GameObject gameObject)
+	{
+		if (gameObject == null || !config.playChestLoot() || !config.lootReveal().playsOnReveal())
+		{
+			return;
+		}
+		int rawId = gameObject.getId();
+		if (!ToaLootReveal.isLootObject(rawId) && !ToaLootReveal.isLootObject(resolvedObjectId(rawId)))
+		{
+			return;
+		}
+		if (!playToaReveal())
+		{
+			toaRevealTicks = 20;
+		}
+	}
+
+	private boolean playToaReveal()
+	{
+		ItemContainer container = client.getItemContainer(InventoryID.TOA_CHESTS);
+		if (container == null || container.getItems() == null)
+		{
+			return false;
+		}
+		boolean found = false;
+		for (Item item : container.getItems())
+		{
+			if (item == null || item.getId() <= 0 || item.getQuantity() <= 0)
+			{
+				continue;
+			}
+			found = true;
+			noteRevealedItem(item.getId(), item.getQuantity());
+		}
+		return found;
+	}
+
 	private void noteTfaReveal(int spotanimId)
 	{
 		int itemId = TfaLootReveal.itemId(spotanimId);
-		if (itemId == 0 || !config.playChestLoot())
+		if (itemId == 0)
+		{
+			return;
+		}
+		noteRevealedItem(itemId, 1);
+	}
+
+	private void noteRevealedItem(int itemId, int quantity)
+	{
+		if (!config.playChestLoot() || !config.lootReveal().playsOnReveal())
 		{
 			return;
 		}
 		int id = canonical(itemId);
-		if (!tfaRevealPlayed.add(id))
+		if (!revealedLoot.add(id))
 		{
 			return;
 		}
-		playItem(id, 1, false);
+		playItem(id, quantity, false);
 	}
 
 	private void playItem(int itemId, int quantity)
@@ -492,7 +553,9 @@ public class AllDropSoundsPlugin extends Plugin
 
 	private void playItem(int itemId, int quantity, boolean skipRevealed)
 	{
-		if (skipRevealed && tfaRevealPlayed.contains(canonical(itemId)))
+		if (skipRevealed
+			&& !config.lootReveal().playsOnInterface()
+			&& revealedLoot.contains(canonical(itemId)))
 		{
 			return;
 		}
