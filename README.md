@@ -47,17 +47,17 @@ One sound plays per item name when:
 
 - the item appears on the ground as your drop or a group drop
 - the item is received from a chest, including Barrows, the Gauntlet and Corrupted Gauntlet, Chambers of Xeric, Theatre of Blood, Tombs of Amascut, The Fractured Archive, the Lunar Chest, the Fortis Colosseum chest, the Wilderness loot chest, and other chests that say you found treasure inside
-- the item is received from a reward pool, including searching and big-searching Tempoross, Guardians of the Rift, and the Wintertodt reward cart
+- the item is received from a reward pool when Reward pools is on, including searching and big-searching Tempoross, Guardians of the Rift, and the Wintertodt reward cart
 
-**Loot reveal** is for the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. The default is When the item appears: the sound plays after the glowing light is gone and that item is visible, and opening the chest to take it stays quiet. When the loot interface opens plays when that window opens. Both plays at each of those moments. The glow itself is silent.
+**Loot reveal** is for the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. The default is When the loot interface opens, the same moment as other chests. When the item appears plays after the glowing light is gone and that item is visible, and opening the chest to take it stays quiet. Both plays at each of those moments. The glow itself is silent.
 
 Chambers of Xeric, Theatre of Blood, and The Fractured Archive's smaller chests play when their loot interface opens.
 
-**Reward pools** plays when a pool puts loot in your inventory. Search and big-search use the same sound. It is on by default.
+**Reward pools** plays when a pool puts loot in your inventory. Search and big-search use the same sound. It is off by default.
 
 **Items you drop** plays a sound for items you place on the ground from your inventory. It is off by default. A drop is recognized from the Drop option and from the item leaving your inventory, including when the game does not mark it as your loot.
 
-**Purple notification** plays `purple.wav` when a purple chest appears in the reward room, before its loot is revealed. It covers Chambers of Xeric, Theatre of Blood, Tombs of Amascut, and The Fractured Archive. That chest's item sound still plays for the loot. Master volume scales `purple.wav`. The notification stays quiet when `purple.wav` is missing.
+**Purple notification** is off by default. It plays `purple.wav` when a purple chest appears in the reward room, before its loot is revealed. It covers Chambers of Xeric, Theatre of Blood, Tombs of Amascut, and The Fractured Archive. That chest's item sound still plays for the loot. Master volume scales `purple.wav`. The notification stays quiet when `purple.wav` is missing.
 
 **Ignored items** is a comma-separated list of item names. A listed item never plays a sound, including when a wav file exists for it or the stack is valuable enough for a tier. Matching ignores letter case.
 

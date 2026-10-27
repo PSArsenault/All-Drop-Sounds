@@ -55,18 +55,18 @@ public interface AllDropSoundsConfig extends Config
 	)
 	default boolean rewardPools()
 	{
-		return true;
+		return false;
 	}
 
 	@ConfigItem(
 		keyName = "lootReveal",
 		name = "Loot reveal",
-		description = "Default plays when the item appears. This is the Tombs of Amascut sarcophagus and The Fractured Archive purple chest. Chambers of Xeric, Theatre of Blood, and the smaller Archive chests play when their loot interface opens.",
+		description = "The default plays when the loot interface opens, the same as other chests. When the item appears plays for the Tombs of Amascut sarcophagus and The Fractured Archive purple chest after that item is visible. Both plays at each moment.",
 		position = 4
 	)
 	default LootReveal lootReveal()
 	{
-		return LootReveal.REVEAL;
+		return LootReveal.INTERFACE;
 	}
 
 	@ConfigItem(
@@ -121,7 +121,7 @@ public interface AllDropSoundsConfig extends Config
 	)
 	default boolean purpleNotification()
 	{
-		return true;
+		return false;
 	}
 
 	@Range(min = 0, max = 100)
