@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
 @PluginDescriptor(
 	name = "All Drop Sounds",
 	internalName = "all-drop-sounds",
-	description = "Plays a wav named after an item when it drops or comes from a chest",
+	description = "Plays a wav named after a category, a value or an item when it drops on the ground or is looted from a chest",
 	tags = {"sound", "drops", "loot", "chest"}
 )
 public class AllDropSoundsPlugin extends Plugin

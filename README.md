@@ -1,6 +1,6 @@
 # All Drop Sounds
 
-RuneLite plugin that plays a custom wav when an item drops on the ground or comes from a chest.
+RuneLite plugin that plays a wav named after a category, a value or an item when it drops on the ground or is looted from a chest.
 
 ## Sounds
 
