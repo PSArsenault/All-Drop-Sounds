@@ -81,6 +81,15 @@ public class SoundFeaturesTest
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Tiny tempor"));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Orion"));
 		Assert.assertTrue(UniqueItems.isUnique("Orion", false, 0, 0));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Baron"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Rift guardian (blood)"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Greatish guardian"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Corrupted Youngllef"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Gull (pet)"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Tumeken's damaged guardian"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Baby Mole-rat"));
+		Assert.assertNull(UniqueItems.categoryStem("Phoenix necklace"));
+		Assert.assertNull(UniqueItems.categoryStem("Red dye"));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Pet chaos elemental"));
 		Assert.assertEquals("jars", UniqueItems.categoryStem("Jar of souls"));
 		Assert.assertEquals("champions", UniqueItems.categoryStem("Champion's scroll"));
