@@ -79,6 +79,8 @@ public class SoundFeaturesTest
 	{
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Skotos"));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Tiny tempor"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Orion"));
+		Assert.assertTrue(UniqueItems.isUnique("Orion", false, 0, 0));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Pet chaos elemental"));
 		Assert.assertEquals("jars", UniqueItems.categoryStem("Jar of souls"));
 		Assert.assertEquals("champions", UniqueItems.categoryStem("Champion's scroll"));

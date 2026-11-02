@@ -28,6 +28,7 @@ public final class UniqueItems
 		"nexling",
 		"noon",
 		"olmlet",
+		"orion",
 		"prince black dragon",
 		"rift guardian",
 		"rocky",
