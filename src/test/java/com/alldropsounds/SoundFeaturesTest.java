@@ -88,6 +88,16 @@ public class SoundFeaturesTest
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Gull (pet)"));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Tumeken's damaged guardian"));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Baby Mole-rat"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Metamorphic dust"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Sanguine dust"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Guardian's eye"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Remnant of Akkha"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Charged ice"));
+		Assert.assertEquals("pets", UniqueItems.categoryStem("Coagulated venom"));
+		Assert.assertTrue(UniqueItems.isUnique("Remnant of Akkha", false, 0, 6_000));
+		Assert.assertNull(UniqueItems.categoryStem("Oak logs"));
+		Assert.assertNull(UniqueItems.categoryStem("Mole claw"));
+		Assert.assertNull(UniqueItems.categoryStem("Spirit flakes"));
 		Assert.assertNull(UniqueItems.categoryStem("Phoenix necklace"));
 		Assert.assertNull(UniqueItems.categoryStem("Red dye"));
 		Assert.assertEquals("pets", UniqueItems.categoryStem("Pet chaos elemental"));
