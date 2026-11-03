@@ -1,0 +1,18 @@
+---
+description: After an Old School RuneScape update, check for new pets and pet-morph items
+alwaysApply: true
+---
+
+# Pet list after a game update
+
+When an Old School RuneScape update has shipped since the review date below, compare it with `UniqueItems` before finishing other plugin work.
+
+Read the update post, the All Pets collection log, and the Metamorphosis page.
+
+Add a missing collection-log pet, including an inventory name used by a metamorph. Add an item that exists to metamorphose a pet. Leave logs, ores, berries, seeds, firelighters, mole claw, mole skin, and spirit flakes off the morph list unless the user asks for one of them.
+
+Match the inventory name, ignoring letter case. Names that start with "Pet ", end with " (pet)", or are a listed name followed by " (variant)" are already covered.
+
+Update the test, README, and the review date below in the same change.
+
+Last reviewed: 3 November 2026, Quest Month Kick Off, TFA Tweaks & More. No new pet or morph item.
