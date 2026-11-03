@@ -12,6 +12,7 @@ import java.util.Set;
  * The set is every collection-log pet plus inventory names used by metamorphs.
  * A name that starts with "Pet " or ends with " (pet)" is a pet without being listed.
  * A listed name followed by " (variant)" is that pet too.
+ * Items that exist to metamorphose a pet use the pet sound as well.
  */
 public final class UniqueItems
 {
@@ -108,6 +109,27 @@ public final class UniqueItems
 		"ziggy"
 	)));
 
+	private static final Set<String> MORPH_ITEMS = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+		"ancient remnant",
+		"blue egg sac",
+		"calcified acorn",
+		"charged ice",
+		"coagulated venom",
+		"dark acorn",
+		"fox whistle",
+		"funky shaped log",
+		"golden pheasant egg",
+		"guardian's eye",
+		"metamorphic dust",
+		"orange egg sac",
+		"parasitic egg",
+		"remnant of akkha",
+		"remnant of ba-ba",
+		"remnant of kephri",
+		"remnant of zebak",
+		"sanguine dust"
+	)));
+
 	private UniqueItems()
 	{
 	}
@@ -119,7 +141,7 @@ public final class UniqueItems
 		{
 			return null;
 		}
-		if (isPet(key))
+		if (isPet(key) || isMorphItem(key))
 		{
 			return "pets";
 		}
@@ -141,7 +163,7 @@ public final class UniqueItems
 		{
 			return false;
 		}
-		if (isPet(key) || key.startsWith("jar of ") || key.contains("champion"))
+		if (isPet(key) || isMorphItem(key) || key.startsWith("jar of ") || key.contains("champion"))
 		{
 			return true;
 		}
@@ -161,6 +183,22 @@ public final class UniqueItems
 		for (String pet : PETS)
 		{
 			if (key.startsWith(pet + " ("))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isMorphItem(String key)
+	{
+		if (MORPH_ITEMS.contains(key))
+		{
+			return true;
+		}
+		for (String item : MORPH_ITEMS)
+		{
+			if (key.startsWith(item + " ("))
 			{
 				return true;
 			}

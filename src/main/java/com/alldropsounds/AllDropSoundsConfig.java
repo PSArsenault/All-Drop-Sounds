@@ -105,7 +105,7 @@ public interface AllDropSoundsConfig extends Config
 	@ConfigItem(
 		keyName = "playUniques",
 		name = "Untradeable uniques",
-		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
+		description = "Play a category wav for pets and other untradeable uniques that have no price. pets.wav, jars.wav, and champions.wav are used when those files exist. Items used to metamorphose a pet, such as metamorphic dust, use pets.wav too. Unique.wav covers the rest. An item file such as skotos.wav still wins.",
 		position = 8
 	)
 	default boolean playUniques()
